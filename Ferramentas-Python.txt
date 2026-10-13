@@ -1,0 +1,11 @@
+Ferramentas
+
+input() -> Escreve e armazena uma informação, mas precisa ser definida a variável primeiro. *ENTRADA DE DADOS*
+ex: nome=input("Escreva seu nome ")  // Vai aparecer no terminal escreva seu nome e você pode digitar, o que você digitou vai ser armazenado na variável nome
+
+print() -> Vai somente escrever o que você colocar entre parênteses. *SAIDA DE DADOS*
+
+
+Ferramentas de decisão
+
+if = se do portugol -> Ele precisa de uma variável e uma condição para funcionar, a variável deve ser definida antes, e as condições podem ser operadores como > (maior), < (menor), == (igual) ou != (diferente); booleanas com true ou false
