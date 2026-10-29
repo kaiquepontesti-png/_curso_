@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanchonete</title>
+    <style>
+
+        :root {
+            --cor-escura: #2c3e50;
+            --cor-clara: #ecf0f1;
+            --cor-destaque: #e67e22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--cor-clara);
+            color: #333;
+        }
+
+        
+        header {
+            background-color: var(--cor-escura);
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: var(--cor-clara);
+            margin-bottom: 15px;
+        }
+
+        nav a {
+            color: var(--cor-clara);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: var(--cor-destaque);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto; 
+            background-color: #ffffff;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+
+        section {
+            padding: 40px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        section h2 {
+            color: var(--cor-escura);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--cor-destaque);
+            color: white;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+        }
+
+        button.btn-enviar {
+            background-color: var(--cor-destaque);
+            color: white;
+            padding: 15px;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button.btn-enviar:hover {
+            background-color: #d35400;
+        }
+
+        .btn-servico {
+            padding: 10px 20px;
+            margin: 5px;
+            border: 1px solid var(--cor-escura);
+            background-color: white;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--cor-escura);
+            color: var(--cor-clara);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lanchonete</h1>
+        <nav>
+            <a href="#sobre">Sobre</a> |
+            <a href="#servicos">Serviços</a> |
+            <a href="#horarios">Horários</a> |
+            <a href="#contato">Contato</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        
+        <section id="sobre">
+            <h2>Sobre</h2>
+            <p>Somos a melhor lanchonete da cidade. Venha provar nossos deliciosos lanches!</p>
+        </section>
+
+        <section id="servicos">
+            <h2>Serviços</h2>
+            <button class="btn-servico">Lanches rápidos</button>
+            <button class="btn-servico">Bebidas</button>
+            <button class="btn-servico">Entregas</button>
+        </section>
+
+        <section id="horarios">
+            <h2>Horários de Funcionamento</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dia da Semana</th>
+                        <th>Horário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Segunda a Sexta</td>
+                        <td>08:00 - 18:00</td>
+                    </tr>
+                    <tr>
+                        <td>Sábado</td>
+                        <td>08:00 - 12:00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="contato">
+            <h2>Contato</h2>
+            <form>
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Seu nome completo">
+
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" placeholder="seu email@exemplo.com">
+
+                <label for="mensagem">Mensagem:</label>
+                <textarea id="mensagem" rows="4" placeholder="Digite sua mensagem aqui..."></textarea>
+
+                <button type="submit" class="btn-enviar">Enviar</button>
+            </form>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Telefone: (11) 99999-9999</p>
+    </footer>
+
+</body>
+</html>

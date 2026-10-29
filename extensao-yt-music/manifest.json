@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Extrator de Músicas YT",
+  "version": "1.0",
+  "description": "Lista as músicas do YouTube Music para copiar facilmente.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
