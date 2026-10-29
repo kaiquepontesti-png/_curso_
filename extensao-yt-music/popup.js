@@ -72,3 +72,4 @@ function varrerPaginaYT() {
     
     return lista;
 }
+// teste de atualizacao
