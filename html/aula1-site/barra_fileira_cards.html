@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<head>
+    <title>Cards clicaveis</title>
+    <style>
+         .topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 24px;
+        }
+
+        .caixa-simples {
+        display: flex;
+        gap: 20px;
+        background-color: #aca9a9;
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #000000;
+        margin-top: 10px;
+        width: 500px;
+        height: 100px;
+        flex-wrap: wrap;
+        
+        cursor: pointer; 
+        transition: 0.1s; 
+    }
+
+    .caixa-menu {
+    background-color: #1af16d;
+    padding: 15px;
+    border: 1px solid #000000;
+    width: 200dvh;
+    height: 80px;
+        
+        cursor: pointer; 
+        transition: 0.1s; 
+    }
+    
+    .caixa-simples:active {
+        transform: scale(0.95);
+    }
+        
+    </style>
+    
+    <header>
+        <div class="caixa-menu">
+            <div class="topo">
+            <h1>Fila de cards</h1>
+        <nav>
+            <a href="#sobre">Sobre</a> |
+            <a href="#servicos">Serviços</a> |
+            <a href="#horarios">Horários</a> |
+            <a href="#contato">Contato</a>
+        </nav>
+        </div>
+        </div>
+    </header>
+
+    <div class="caixa-simples">
+        Nome completo<br>
+        Título ou cargo atual<br>
+        Contatos
+    </div>
+    <div class="caixa-simples">
+        Nome completo<br>
+        Título ou cargo atual<br>
+        Contatos
+    </div>
+    <div class="caixa-simples">
+        Nome completo<br>
+        Título ou cargo atual<br>
+        Contatos
+    </div>
+
+    
