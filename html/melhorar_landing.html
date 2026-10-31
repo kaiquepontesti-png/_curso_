@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Landing Page</title>
+    <style>
+        body.escuro { background: #222; color: #fff; }
+        .menu { display: none; background: #eee; padding: 10px; }
+        .menu.aberto { display: block; }
+        .menu a { display: block; margin: 5px 0; }
+        #erro { color: red; }
+    </style>
+</head>
+<body>
+    <button id="btn-tema">Tema Escuro</button>
+    <button id="btn-menu">Menu</button>
+
+    <nav id="menu" class="menu">
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+    </nav>
+
+    <form id="form" style="margin-top: 20px;">
+        <input type="text" id="nome" placeholder="Digite seu nome">
+        <button type="submit">Enviar</button>
+        <p id="erro"></p>
+    </form>
+
+    <script src="melhorar_landing.js"></script>
+</body>
+</html>
