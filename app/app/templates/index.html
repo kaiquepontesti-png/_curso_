@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}NumEsquece · Sua lista de compras{% endblock %}
+
+{% block content %}
+<section class="home-page-shell">
+  <div class="home-layout home-layout-tight">
+    <div class="home-menu">
+      <a href="{{ url_for('auth.login') }}" class="home-menu-item">Entrar</a>
+      <a href="{{ url_for('auth.register') }}" class="home-menu-item">Cadastre-se</a>
+      <a href="#" class="home-menu-item">Dúvidas</a>
+      <a href="#" class="home-menu-item">Sobre</a>
+      <a href="#" class="home-menu-item">Contato</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

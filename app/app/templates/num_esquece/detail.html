@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="page-header detail-header">
+  <div>
+    <p class="eyebrow">Detalhes</p>
+    <h1>{{ record.titulo }}</h1>
+  </div>
+  <div class="action-group">
+    <a href="{{ url_for('num_esquece.edit_record', record_id=record.id) }}" class="btn btn-secondary">Editar</a>
+    <form action="{{ url_for('num_esquece.delete_record', record_id=record.id) }}" method="post" class="inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit" class="btn btn-danger" data-confirm="Deseja realmente excluir este registro?">Excluir</button>
+    </form>
+  </div>
+</section>
+
+<section class="panel detail-card">
+  <div class="details-grid">
+    <div>
+      <label>Categoria</label>
+      <p>{{ record.categoria }}</p>
+    </div>
+    <div>
+      <label>Status</label>
+      <p><span class="status-badge status-{{ record.status }}">{{ record.status.replace('_', ' ') }}</span></p>
+    </div>
+    <div>
+      <label>Data de vencimento</label>
+      <p>{{ record.data_vencimento.strftime('%d/%m/%Y') if record.data_vencimento else 'Não informada' }}</p>
+    </div>
+    <div>
+      <label>Criado em</label>
+      <p>{{ record.created_at.strftime('%d/%m/%Y %H:%M') if record.created_at else '—' }}</p>
+    </div>
+  </div>
+
+  <div class="description-block">
+    <label>Descrição</label>
+    <p>{{ record.descricao }}</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ shopping_list.titulo }} · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Lista de compras</p>
+    <h1>{{ shopping_list.titulo }}</h1>
+    {% if shopping_list.descricao %}
+      <p>{{ shopping_list.descricao }}</p>
+    {% endif %}
+  </div>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary">Editar</a>
+    <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit" class="btn btn-secondary">Duplicar</button>
+    </form>
+    <form action="{{ url_for('shopping.delete_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Remover esta lista?')">Excluir</button>
+    </form>
+  </div>
+</section>
+
+<section class="panel" style="margin-bottom: 24px;">
+  <div class="panel-header">
+    <h2>Adicionar item</h2>
+  </div>
+
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="form-grid">
+      <div class="field-group">
+        {{ form.nome.label }}
+        {{ form.nome(class_='input-field') }}
+        {% for error in form.nome.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group">
+        {{ form.quantidade.label }}
+        {{ form.quantidade(class_='input-field') }}
+      </div>
+
+      <div class="field-group">
+        {{ form.categoria.label }}
+        {{ form.categoria(class_='input-field') }}
+      </div>
+
+      <div class="field-group checkbox-row">
+        {{ form.comprado.label }}
+        {{ form.comprado() }}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      {{ form.submit(class_='btn btn-primary') }}
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Itens da lista</h2>
+  </div>
+
+  {% if shopping_list.items %}
+    <div class="record-list compact-list">
+      {% for item in shopping_list.items %}
+        <article class="record-item">
+          <div>
+            <p class="record-tag">{{ item.categoria }}</p>
+            <h3>{{ item.nome }}</h3>
+            <p>Quantidade: {{ item.quantidade }}</p>
+          </div>
+
+          <div class="record-meta">
+            <span class="status-badge {% if item.comprado %}status-concluido{% else %}status-pendente{% endif %}">
+              {% if item.comprado %}Comprado{% else %}Pendendo{% endif %}
+            </span>
+
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <form action="{{ url_for('shopping.toggle_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-secondary btn-small">{% if item.comprado %}Marcar pendente{% else %}Marcar comprado{% endif %}</button>
+              </form>
+              <form action="{{ url_for('shopping.delete_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remover este item?')">Excluir</button>
+              </form>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>Esta lista ainda não tem itens.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

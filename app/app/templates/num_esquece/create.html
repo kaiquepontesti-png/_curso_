@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo registro · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Cadastro</p>
+    <h1>Novo registro</h1>
+  </div>
+</section>
+
+<section class="panel form-panel">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="form-grid">
+      <div class="field-group">
+        {{ form.titulo.label }}
+        {{ form.titulo(class_='input-field') }}
+        {% for error in form.titulo.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group">
+        {{ form.categoria.label }}
+        {{ form.categoria(class_='input-field') }}
+        {% for error in form.categoria.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group full-width">
+        {{ form.descricao.label }}
+        {{ form.descricao(class_='input-field textarea-field') }}
+        {% for error in form.descricao.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group">
+        {{ form.status.label }}
+        {{ form.status(class_='input-field') }}
+        {% for error in form.status.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group">
+        {{ form.data_vencimento.label }}
+        {{ form.data_vencimento(class_='input-field') }}
+        {% for error in form.data_vencimento.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Salvar registro</button>
+      <a href="{{ url_for('num_esquece.list_records') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

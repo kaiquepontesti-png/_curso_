@@ -2,12 +2,21 @@
   "manifest_version": 3,
   "name": "Recortar e Traduzir",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://translate.googleapis.com/*"],
   "action": {
     "default_popup": "popup.html"
   },
   "background": {
     "service_worker": "background.js"
+  },
+  "commands": {
+    "ativar_recorte_invisivel": {
+      "suggested_key": {
+        "default": "Alt+Q",
+        "mac": "Alt+Q"
+      },
+      "description": "Ativar o recorte sem o site perceber"
+    }
   }
 }

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="panel form-panel" style="max-width: 700px; margin: 30px auto;">
+  <div class="panel-header">
+    <h1>{{ title }}</h1>
+  </div>
+
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="field-group">
+      {{ form.titulo.label }}
+      {{ form.titulo(class_='input-field') }}
+      {% for error in form.titulo.errors %}
+        <span class="field-error">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="field-group">
+      {{ form.descricao.label }}
+      {{ form.descricao(class_='input-field textarea-field') }}
+      {% for error in form.descricao.errors %}
+        <span class="field-error">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="form-actions">
+      {{ form.submit(class_='btn btn-primary') }}
+      <a href="{{ url_for('shopping.list_lists') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
