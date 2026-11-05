@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar item · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Lista de compras</p>
+    <h1>Editar item</h1>
+    <p>{{ shopping_list.titulo }}</p>
+  </div>
+</section>
+
+<section class="panel form-panel">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <datalist id="quantidade-options">
+      <option value="01" label="1"></option>
+      <option value="02" label="2"></option>
+      <option value="03" label="3"></option>
+      <option value="04" label="4"></option>
+      <option value="05" label="5"></option>
+      <option value="06" label="6"></option>
+      <option value="07" label="7"></option>
+      <option value="08" label="8"></option>
+      <option value="09" label="9"></option>
+      <option value="10" label="10"></option>
+      <option value="11" label="11"></option>
+      <option value="12" label="12"></option>
+      <option value="13" label="13"></option>
+      <option value="14" label="14"></option>
+      <option value="15" label="15"></option>
+    </datalist>
+
+    <div class="form-grid">
+      <div class="field-group">
+        {{ form.nome.label }}
+        {{ form.nome(class_='input-field') }}
+        {% for error in form.nome.errors %}
+          <span class="field-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="field-group">
+        {{ form.quantidade.label }}
+        {{ form.quantidade(class_='input-field') }}
+      </div>
+
+      <div class="field-group">
+        {{ form.categoria.label }}
+        {{ form.categoria(class_='input-field') }}
+      </div>
+
+      <div class="field-group">
+        {{ form.preco.label }}
+        {{ form.preco(class_='input-field') }}
+      </div>
+
+      <div class="field-group checkbox-wrapper" style="grid-column: 2; justify-self: start; margin-top: 10px; margin-left: 18px;">
+        <div class="checkbox-inline">
+          {{ form.preco_indefinido() }}
+          <label for="preco_indefinido">{{ form.preco_indefinido.label.text }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Salvar alterações</button>
+      <a href="{{ url_for('shopping.detail_list', list_id=shopping_list.id) }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

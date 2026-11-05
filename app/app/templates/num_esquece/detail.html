@@ -41,5 +41,12 @@
     <label>Descrição</label>
     <p>{{ record.descricao }}</p>
   </div>
+
+  {% if record.shopping_list_id %}
+    <div class="description-block">
+      <label>Lista vinculada</label>
+      <p><a href="{{ url_for('shopping.detail_list', list_id=record.shopping_list_id) }}" class="btn btn-secondary btn-small">Abrir lista de compras</a></p>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

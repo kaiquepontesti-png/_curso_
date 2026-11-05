@@ -23,6 +23,22 @@ def ensure_user_schema():
         db.session.commit()
 
 
+def ensure_shopping_item_schema():
+    inspector = inspect(db.engine)
+    columns = [column["name"] for column in inspector.get_columns("shopping_items")]
+    if "preco" not in columns:
+        db.session.execute(text("ALTER TABLE shopping_items ADD COLUMN preco VARCHAR(30)"))
+        db.session.commit()
+
+
+def ensure_num_esquece_schema():
+    inspector = inspect(db.engine)
+    columns = [column["name"] for column in inspector.get_columns("num_esquece")]
+    if "shopping_list_id" not in columns:
+        db.session.execute(text("ALTER TABLE num_esquece ADD COLUMN shopping_list_id INTEGER UNIQUE"))
+        db.session.commit()
+
+
 def create_app(config_name: str = "default") -> Flask:
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -35,6 +51,8 @@ def create_app(config_name: str = "default") -> Flask:
     with app.app_context():
         db.create_all()
         ensure_user_schema()
+        ensure_shopping_item_schema()
+        ensure_num_esquece_schema()
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(shopping_bp)

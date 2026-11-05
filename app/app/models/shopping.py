@@ -45,6 +45,12 @@ class ShoppingList(db.Model):
 
     user = db.relationship("User", back_populates="shopping_lists")
     items = db.relationship("ShoppingItem", back_populates="shopping_list", cascade="all, delete-orphan")
+    library_entry = db.relationship(
+        "NumEsquece",
+        uselist=False,
+        foreign_keys="NumEsquece.shopping_list_id",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self):
         return f"<ShoppingList {self.titulo}>"
@@ -58,6 +64,7 @@ class ShoppingItem(db.Model):
     nome = db.Column(db.String(120), nullable=False)
     quantidade = db.Column(db.String(30), nullable=False, default="1")
     categoria = db.Column(db.String(80), nullable=False, default="geral")
+    preco = db.Column(db.String(30), nullable=True, default="0")
     comprado = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=utc_now)
     updated_at = db.Column(db.DateTime, nullable=False, default=utc_now, onupdate=utc_now)

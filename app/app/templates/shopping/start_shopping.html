@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Selecionar lista · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="panel" style="max-width: 900px; margin: 40px auto; padding: 28px;">
+  <div class="panel-header">
+    <h1>Escolha uma lista para continuar</h1>
+    <p>Você tem mais de uma lista cadastrada. Selecione a que deseja usar para iniciar a compra.</p>
+  </div>
+
+  <div class="record-list compact-list">
+    {% for lista in lists %}
+      <article class="record-item">
+        <div>
+          <p class="record-tag">Lista</p>
+          <h3>{{ lista.titulo }}</h3>
+          {% if lista.descricao %}
+            <p>{{ lista.descricao }}</p>
+          {% endif %}
+        </div>
+
+        <div class="record-meta">
+          <a href="{{ url_for('shopping.start_selected_list', list_id=lista.id) }}" class="btn btn-primary btn-small">Selecionar</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

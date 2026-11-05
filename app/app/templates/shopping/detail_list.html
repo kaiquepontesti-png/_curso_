@@ -12,6 +12,7 @@
     {% endif %}
   </div>
   <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <a href="{{ url_for('shopping.start_shopping') }}" class="btn btn-primary">Vamos começar as compras?</a>
     <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary">Editar</a>
     <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -32,6 +33,24 @@
   <form method="post" novalidate>
     {{ form.hidden_tag() }}
 
+    <datalist id="quantidade-options">
+      <option value="01" label="1"></option>
+      <option value="02" label="2"></option>
+      <option value="03" label="3"></option>
+      <option value="04" label="4"></option>
+      <option value="05" label="5"></option>
+      <option value="06" label="6"></option>
+      <option value="07" label="7"></option>
+      <option value="08" label="8"></option>
+      <option value="09" label="9"></option>
+      <option value="10" label="10"></option>
+      <option value="11" label="11"></option>
+      <option value="12" label="12"></option>
+      <option value="13" label="13"></option>
+      <option value="14" label="14"></option>
+      <option value="15" label="15"></option>
+    </datalist>
+
     <div class="form-grid">
       <div class="field-group">
         {{ form.nome.label }}
@@ -51,9 +70,16 @@
         {{ form.categoria(class_='input-field') }}
       </div>
 
-      <div class="field-group checkbox-row">
-        {{ form.comprado.label }}
-        {{ form.comprado() }}
+      <div class="field-group">
+        {{ form.preco.label }}
+        {{ form.preco(class_='input-field') }}
+      </div>
+
+      <div class="field-group checkbox-wrapper" style="grid-column: 2; justify-self: start; margin-top: 12px; margin-left: 18px;">
+        <div class="checkbox-inline">
+          {{ form.preco_indefinido() }}
+          <label for="preco_indefinido">{{ form.preco_indefinido.label.text }}</label>
+        </div>
       </div>
     </div>
 
@@ -76,18 +102,16 @@
             <p class="record-tag">{{ item.categoria }}</p>
             <h3>{{ item.nome }}</h3>
             <p>Quantidade: {{ item.quantidade }}</p>
+            <p>Preço: R$ {{ item.preco or '0,00' }}</p>
           </div>
 
-          <div class="record-meta">
+          <div class="record-meta" style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
             <span class="status-badge {% if item.comprado %}status-concluido{% else %}status-pendente{% endif %}">
-              {% if item.comprado %}Comprado{% else %}Pendendo{% endif %}
+              {% if item.comprado %}Comprado{% else %}Pendente{% endif %}
             </span>
 
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <form action="{{ url_for('shopping.toggle_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" style="display: inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="btn btn-secondary btn-small">{% if item.comprado %}Marcar pendente{% else %}Marcar comprado{% endif %}</button>
-              </form>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+              <a href="{{ url_for('shopping.edit_item', list_id=shopping_list.id, item_id=item.id) }}" class="btn btn-secondary btn-small">Editar</a>
               <form action="{{ url_for('shopping.delete_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" style="display: inline;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remover este item?')">Excluir</button>
@@ -96,6 +120,10 @@
           </div>
         </article>
       {% endfor %}
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-top: 24px;">
+      <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-primary">Vamos comprar?</a>
     </div>
   {% else %}
     <div class="empty-state">

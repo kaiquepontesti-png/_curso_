@@ -14,6 +14,7 @@ class NumEsquece(db.Model):
     titulo = db.Column(db.String(120), nullable=False)
     descricao = db.Column(db.Text, nullable=False)
     categoria = db.Column(db.String(60), nullable=False, default="geral")
+    shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_lists.id"), nullable=True, unique=True, index=True)
     status = db.Column(db.String(30), nullable=False, default="pendente")
     data_vencimento = db.Column(db.Date, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=utc_now)

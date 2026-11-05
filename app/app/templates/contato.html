@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Contato · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="panel contact-panel">
+  <div class="panel-header">
+    <h1>Contato</h1>
+    <p>Estamos aqui para ajudar com dúvidas, sugestões e suporte do site.</p>
+  </div>
+
+  <div class="contact-grid">
+    {% for item in contato_info %}
+      <article class="contact-card">
+        <h3>{{ item.titulo }}</h3>
+        <p class="contact-value">{{ item.valor }}</p>
+        <p>{{ item.descricao }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

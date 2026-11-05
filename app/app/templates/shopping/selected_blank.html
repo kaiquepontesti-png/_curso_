@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista selecionada · NumEsquece</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(180deg, #eef5ff 0%, #cfe2ff 100%);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .white-box {
+        width: min(860px, calc(100% - 48px));
+        min-height: 300px;
+        background: #ffffff;
+        border: 1px solid #dfe3ec;
+        border-radius: 18px;
+        box-shadow: 0 20px 40px rgba(31, 42, 55, 0.12);
+        padding: 28px 26px;
+      }
+      .header {
+        margin-bottom: 22px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #edf2f7;
+      }
+      .eyebrow {
+        margin: 0 0 8px;
+        color: #2f6fed;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        color: #1f2a37;
+      }
+      .items {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .item-row {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) 150px 150px 120px;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid #edf2f7;
+        border-radius: 12px;
+        background: #f9fbff;
+        align-items: center;
+      }
+      .item-name {
+        font-weight: 700;
+        color: #1f2a37;
+      }
+      .item-meta {
+        color: #4b5563;
+        font-size: 0.96rem;
+      }
+      .item-form {
+        display: contents;
+      }
+      .item-form input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #dfe3ec;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background: #fff;
+      }
+      .save-btn {
+        border: none;
+        border-radius: 8px;
+        background: #2f6fed;
+        color: #fff;
+        font-weight: 700;
+        padding: 6px 6px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        width: 56px;
+        min-width: 56px;
+      }
+      .empty-state {
+        padding: 22px 12px;
+        text-align: center;
+        color: #64748b;
+        background: #f8fafc;
+        border: 1px dashed #dfe3ec;
+        border-radius: 12px;
+      }
+      .unsaved-warning {
+        margin-top: 18px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(220, 53, 69, 0.08);
+        border: 1px solid rgba(220, 53, 69, 0.2);
+        color: #a51b2b;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: none;
+      }
+      @media (max-width: 640px) {
+        .item-row {
+          grid-template-columns: 1fr;
+        }
+        .save-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="white-box">
+      <div class="header">
+        <p class="eyebrow">Lista selecionada</p>
+        <h1>{{ shopping_list.titulo }}</h1>
+      </div>
+
+      {% if shopping_list.items %}
+        <div class="items">
+          {% for item in shopping_list.items %}
+            <form method="post" class="item-form" data-dirty="false">
+              <input type="hidden" name="item_id" value="{{ item.id }}" />
+              <div class="item-row">
+                <div class="item-name">{{ item.nome }}</div>
+                <div class="item-meta">
+                  <label for="quantidade-{{ item.id }}" style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Quantidade</label>
+                  <input id="quantidade-{{ item.id }}" type="text" name="quantidade" value="{{ item.quantidade }}" />
+                </div>
+                <div class="item-meta">
+                  <label for="preco-{{ item.id }}" style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Preço</label>
+                  <input id="preco-{{ item.id }}" type="text" name="preco" value="{{ item.preco or '0,00' }}" />
+                </div>
+                <button type="submit" class="save-btn">Salvar</button>
+              </div>
+            </form>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">Esta lista ainda não possui produtos cadastrados.</div>
+      {% endif %}
+
+      <div class="unsaved-warning" id="unsaved-warning">Salve as alterações antes de continuar</div>
+    </div>
+
+    <script>
+      const warning = document.getElementById('unsaved-warning');
+      const forms = document.querySelectorAll('.item-form');
+
+      function showWarning() {
+        warning.style.display = 'block';
+      }
+
+      function hideWarning() {
+        warning.style.display = 'none';
+      }
+
+      forms.forEach((form) => {
+        form.addEventListener('input', () => {
+          form.dataset.dirty = 'true';
+          showWarning();
+        });
+
+        form.addEventListener('submit', () => {
+          form.dataset.dirty = 'false';
+          hideWarning();
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        const target = event.target.closest('a, button');
+        if (!target) return;
+
+        const isSubmitButton = target.matches('button[type="submit"]');
+        if (isSubmitButton) return;
+
+        const hasDirtyForm = Array.from(forms).some((form) => form.dataset.dirty === 'true');
+        if (hasDirtyForm) {
+          event.preventDefault();
+          showWarning();
+        }
+      });
+
+      window.addEventListener('beforeunload', (event) => {
+        const hasDirtyForm = Array.from(forms).some((form) => form.dataset.dirty === 'true');
+        if (hasDirtyForm) {
+          event.preventDefault();
+          event.returnValue = '';
+        }
+      });
+    </script>
+  </body>
+</html>

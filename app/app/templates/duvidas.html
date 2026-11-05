@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Dúvidas · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="panel faq-panel" style="max-width: 900px; margin: 30px auto; padding: 24px 28px;">
+  <div class="panel-header" style="display: block; margin-bottom: 20px;">
+    <h1 style="margin-bottom: 8px;">Dúvidas frequentes</h1>
+    <p style="margin: 0;">Confira as perguntas mais comuns sobre o NumEsquece e como usar o site.</p>
+  </div>
+
+  <div class="faq-list">
+    {% for item in faq %}
+      <div class="faq-item">
+        <div class="faq-question">{{ item.pergunta }}</div>
+        <div class="faq-answer">{{ item.resposta }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

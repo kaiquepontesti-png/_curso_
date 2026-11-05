@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Sobre · NumEsquece{% endblock %}
+
+{% block content %}
+<section class="panel about-panel">
+  <div class="panel-header">
+    <h1>Sobre o NumEsquece</h1>
+    <p>Uma ideia prática criada para tornar as compras mais simples, organizadas e sem esquecimentos.</p>
+  </div>
+
+  <div class="about-story">
+    <div class="about-feature">
+      <h2>Nossa história</h2>
+      <p>
+        O NumEsquece foi criado como uma solução fictícia para resolver um problema muito real:
+        o momento em que a pessoa chega no mercado e percebe que deixou itens importantes para trás.
+      </p>
+      <p>
+        A ideia começou em um projeto de estudo, com a intenção de criar um sistema leve, bonito e fácil de usar,
+        onde qualquer pessoa pudesse montar listas de compras em poucos segundos e acompanhar o que já foi comprado.
+      </p>
+    </div>
+
+    <div class="about-mission">
+      <h2>Missão</h2>
+      <p>
+        Facilitar a organização do dia a dia, ajudar pessoas a economizar tempo e evitar compras impulsivas
+        ou itens esquecidos no caminho.
+      </p>
+    </div>
+  </div>
+
+  <div class="about-grid">
+    {% for item in historia %}
+      <article class="about-card">
+        <h3>{{ item.titulo }}</h3>
+        <p>{{ item.texto }}</p>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

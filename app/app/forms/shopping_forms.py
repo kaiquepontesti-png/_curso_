@@ -11,7 +11,13 @@ class ShoppingListForm(FlaskForm):
 
 class ShoppingItemForm(FlaskForm):
     nome = StringField("Nome do item", validators=[DataRequired(message="Informe o nome do item."), Length(min=2, max=120)])
-    quantidade = StringField("Quantidade", default="1", validators=[Length(max=30)])
+    quantidade = StringField(
+        "Quantidade",
+        default="1",
+        validators=[Length(max=30)],
+        render_kw={"list": "quantidade-options", "placeholder": "1"},
+    )
     categoria = StringField("Categoria", default="geral", validators=[Length(max=80)])
-    comprado = BooleanField("Já foi comprado")
+    preco = StringField("Preço", default="0,00", render_kw={"placeholder": "0,00"})
+    preco_indefinido = BooleanField("Não sei o preço agora")
     submit = SubmitField("Adicionar item")

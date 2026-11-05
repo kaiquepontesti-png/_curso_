@@ -28,6 +28,7 @@
             <span class="status-badge status-pendente">Atualizada em {{ shopping_list.updated_at.strftime('%d/%m/%Y') }}</span>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
               <a href="{{ url_for('shopping.detail_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small">Abrir</a>
+              <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-primary btn-small">Vamos comprar?</a>
               <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small">Editar</a>
               <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />

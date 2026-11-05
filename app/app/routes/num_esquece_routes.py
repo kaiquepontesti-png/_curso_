@@ -24,7 +24,88 @@ def index():
     return render_template("index.html")
 
 
-@num_esquece_bp.route("/registros", methods=["GET"])
+@num_esquece_bp.route("/duvidas")
+def duvidas():
+    faq = [
+        {
+            "pergunta": "Como posso criar uma lista de compras?",
+            "resposta": "Acesse o botão de cadastro ou login, crie sua conta e depois vá até a área de listas para criar uma nova lista."
+        },
+        {
+            "pergunta": "Posso marcar itens como comprados?",
+            "resposta": "Sim. Dentro da lista, cada item pode ser marcado como concluído e também removido quando não for mais necessário."
+        },
+        {
+            "pergunta": "Minha lista pode ter descrição e organização?",
+            "resposta": "Sim. Você pode criar listas com nome, descrição e organizar itens por quantidade e status de conclusão."
+        },
+        {
+            "pergunta": "É necessário pagar para usar o site?",
+            "resposta": "Não. O NumEsquece foi pensado para uso gratuito e simples para ajudar na organização das compras do dia a dia."
+        },
+        {
+            "pergunta": "Posso acessar o site em qualquer navegador?",
+            "resposta": "Sim. O sistema foi desenvolvido para funcionar em navegadores modernos como Chrome, Edge e Firefox."
+        },
+        {
+            "pergunta": "Como faço para sair da conta?",
+            "resposta": "No menu superior, clique em Sair para encerrar sua sessão com segurança."
+        }
+    ]
+    return render_template("duvidas.html", faq=faq)
+
+
+@num_esquece_bp.route("/sobre")
+def sobre():
+    historia = [
+        {
+            "titulo": "A ideia",
+            "texto": "O NumEsquece nasceu de uma necessidade simples: organizar compras sem perder tempo ou esquecer itens importantes."
+        },
+        {
+            "titulo": "A criação",
+            "texto": "Em um pequeno projeto de estudos e prática, a equipe imaginou um sistema fácil de usar para ajudar pessoas a montar listas inteligentes e rápidas."
+        },
+        {
+            "titulo": "O objetivo",
+            "texto": "O principal foco era remover a frustração de lembrar tudo na hora da compra, especialmente em dias corridos e com várias demandas."
+        },
+        {
+            "titulo": "A evolução",
+            "texto": "Com o tempo, o projeto ganhou interface mais clara, organização por listas e uma identidade visual que tornasse o uso mais agradável."
+        }
+    ]
+    return render_template("sobre.html", historia=historia)
+
+
+@num_esquece_bp.route("/contato")
+def contato():
+    contato_info = [
+        {
+            "titulo": "Atendimento",
+            "valor": "atendimento@numesquece.com.br",
+            "descricao": "Para dúvidas, sugestões e suporte geral."
+        },
+        {
+            "titulo": "Telefone",
+            "valor": "+55 (11) 4002-8922",
+            "descricao": "Horário de atendimento: segunda a sexta, das 9h às 18h."
+        },
+        {
+            "titulo": "Localização",
+            "valor": "São Paulo - SP",
+            "descricao": "Nossa base fictícia de operação e atendimento."
+        },
+        {
+            "titulo": "Redes sociais",
+            "valor": "@numesquece",
+            "descricao": "Siga o projeto para acompanhar novidades e atualizações."
+        }
+    ]
+    return render_template("contato.html", contato_info=contato_info)
+
+
+@num_esquece_bp.route("/registros", methods=["GET"]) 
 def list_records():
     search = request.args.get("q", "", type=str)
     records = list_num_esquece(search=search)
