@@ -18,6 +18,10 @@ class ShoppingItemForm(FlaskForm):
         render_kw={"list": "quantidade-options", "placeholder": "1"},
     )
     categoria = StringField("Categoria", default="geral", validators=[Length(max=80)])
-    preco = StringField("Preço", default="0,00", render_kw={"placeholder": "0,00"})
+    preco = StringField(
+        "Preço",
+        default="0,00",
+        render_kw={"placeholder": "0,00", "inputmode": "numeric", "autocomplete": "off"},
+    )
     preco_indefinido = BooleanField("Não sei o preço agora")
     submit = SubmitField("Adicionar item")

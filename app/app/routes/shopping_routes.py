@@ -80,26 +80,52 @@ def start_selected_list(list_id: int):
     shopping_list = ShoppingList.query.filter_by(id=list_id, user_id=current_user.id).first_or_404()
     if request.method == "POST":
         item_id = request.form.get("item_id", type=int)
-        item = ShoppingItem.query.join(ShoppingList).filter(
-            ShoppingItem.id == item_id,
-            ShoppingList.id == list_id,
-            ShoppingList.user_id == current_user.id,
-        ).first_or_404()
+        nome = (request.form.get("nome") or "").strip()
 
-        quantidade = (request.form.get("quantidade") or "1").strip()
-        if quantidade.isdigit():
-            quantidade = str(int(quantidade))
+        if item_id is not None:
+            item = ShoppingItem.query.join(ShoppingList).filter(
+                ShoppingItem.id == item_id,
+                ShoppingList.id == list_id,
+                ShoppingList.user_id == current_user.id,
+            ).first_or_404()
 
-        preco = (request.form.get("preco") or "0,00").strip()
-        if not preco:
-            preco = "0,00"
+            quantidade = (request.form.get("quantidade") or "1").strip()
+            if quantidade.isdigit():
+                quantidade = str(int(quantidade))
 
-        item.quantidade = quantidade
-        item.preco = preco
-        sync_shopping_list_to_library(shopping_list)
-        db.session.commit()
-        flash("Item atualizado com sucesso!", "success")
-        return redirect(url_for("shopping.start_selected_list", list_id=list_id))
+            preco = (request.form.get("preco") or "0,00").strip()
+            if not preco:
+                preco = "0,00"
+
+            item.quantidade = quantidade
+            item.preco = preco
+            if item.nome != nome and nome:
+                item.nome = nome
+            sync_shopping_list_to_library(shopping_list)
+            db.session.commit()
+            return render_template("shopping/selected_blank.html", shopping_list=shopping_list)
+
+        if nome:
+            quantidade = (request.form.get("quantidade") or "1").strip()
+            if quantidade.isdigit():
+                quantidade = str(int(quantidade))
+
+            preco = (request.form.get("preco") or "0,00").strip()
+            if not preco:
+                preco = "0,00"
+
+            item = ShoppingItem(
+                shopping_list_id=shopping_list.id,
+                nome=nome,
+                quantidade=quantidade,
+                categoria=(request.form.get("categoria") or "geral").strip() or "geral",
+                preco=preco,
+                comprado=False,
+            )
+            db.session.add(item)
+            sync_shopping_list_to_library(shopping_list)
+            db.session.commit()
+            return render_template("shopping/selected_blank.html", shopping_list=shopping_list)
 
     return render_template("shopping/selected_blank.html", shopping_list=shopping_list)
 

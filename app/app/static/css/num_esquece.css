@@ -116,17 +116,17 @@
 }
 
 .status-pendente {
-  background: rgba(245, 158, 11, 0.12);
+  background: #fff7ed;
   color: #9a6000;
 }
 
 .status-em_andamento {
-  background: rgba(47, 111, 237, 0.12);
+  background: #edf3ff;
   color: #1e4ec2;
 }
 
 .status-concluido {
-  background: rgba(37, 167, 93, 0.12);
+  background: #ebfdf3;
   color: #0f7b42;
 }
 

@@ -9,20 +9,61 @@
       body {
         margin: 0;
         min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(180deg, #eef5ff 0%, #cfe2ff 100%);
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: 'Public Sans', Arial, Helvetica, sans-serif;
+        background: linear-gradient(180deg, #f4f7ff 0%, #edf3ff 18%, #f8f7f2 100%);
+        color: #1f2a37;
       }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url('/static/images/fundo.jpg');
+        background-repeat: repeat;
+        background-size: auto;
+        background-position: center center;
+        opacity: 0.08;
+        pointer-events: none;
+      }
+      .page-shell {
+        position: relative;
+        z-index: 1;
+        width: min(1100px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 40px;
+      }
+      .side-menu {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        width: 220px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+        z-index: 50;
+      }
+      .side-menu-header { display: flex; justify-content: flex-end; padding: 12px 12px 8px; }
+      .side-menu-toggle {
+        width: 38px; height: 38px; border: 1px solid #e2e8f0; border-radius: 12px;
+        background: #f5f7ff; color: #111827; font-size: 1.2rem; font-weight: 700; cursor: pointer;
+      }
+      .side-menu-nav {
+        display: flex; flex-direction: column; gap: 10px; padding: 0 12px 16px;
+      }
+      .side-menu-nav a, .side-menu-back {
+        display: flex; align-items: center; justify-content: center; width: 100%; min-height: 46px; padding: 10px 12px;
+        border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; color: #111827; text-decoration: none; font-weight: 700; cursor: pointer;
+      }
+      .side-menu-nav a:hover, .side-menu-back:hover, .side-menu-toggle:hover { background: #edf3ff; }
       .white-box {
-        width: min(860px, calc(100% - 48px));
+        width: min(980px, calc(100% - 32px));
         min-height: 300px;
         background: #ffffff;
-        border: 1px solid #dfe3ec;
-        border-radius: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 26px;
         box-shadow: 0 20px 40px rgba(31, 42, 55, 0.12);
         padding: 28px 26px;
+        margin-left: 260px;
       }
       .header {
         margin-bottom: 22px;
@@ -49,13 +90,15 @@
       }
       .item-row {
         display: grid;
-        grid-template-columns: minmax(0, 2fr) 150px 150px 120px;
+        grid-template-columns: minmax(0, 2fr) 150px 150px minmax(190px, 220px);
         gap: 12px;
-        padding: 14px 16px;
-        border: 1px solid #edf2f7;
-        border-radius: 12px;
-        background: #f9fbff;
-        align-items: center;
+        padding: 16px 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #ffffff;
+        align-items: start;
+        min-height: 120px;
+        box-shadow: 0 12px 22px rgba(15, 23, 42, 0.04);
       }
       .item-name {
         font-weight: 700;
@@ -76,17 +119,113 @@
         font-size: 0.95rem;
         background: #fff;
       }
-      .save-btn {
+      .item-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        min-height: 84px;
+      }
+      .save-btn,
+      .cart-btn,
+      .remove-cart-btn {
         border: none;
-        border-radius: 8px;
-        background: #2f6fed;
+        border-radius: 12px;
         color: #fff;
         font-weight: 700;
-        padding: 6px 6px;
-        font-size: 0.7rem;
+        padding: 9px 12px;
+        font-size: 0.72rem;
         cursor: pointer;
+        box-shadow: 0 12px 18px rgba(31, 42, 55, 0.08);
+      }
+      .save-btn {
+        background: linear-gradient(135deg, #2f6fed 0%, #5f8ffc 100%);
         width: 56px;
         min-width: 56px;
+      }
+      .cart-btn {
+        background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+      }
+      .remove-cart-btn {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      }
+      .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #edf2f7;
+      }
+      .quick-add {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .quick-add.hidden { display: none; }
+      .quick-add .quick-form {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) 150px 150px auto;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #f8fafc;
+        align-items: end;
+      }
+      .quick-add .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        color: #4b5563;
+        font-size: 0.9rem;
+      }
+      .quick-add .field input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #dfe3ec;
+        border-radius: 10px;
+        background: #fff;
+      }
+      .cart-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #f8fafc;
+      }
+      .purchase-total-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 18px;
+        padding: 10px 14px;
+        border: 1px solid #dfe3ec;
+        border-radius: 12px;
+        background: #f8fafc;
+        max-width: 260px;
+        width: 100%;
+      }
+      .purchase-total-box label { font-weight: 700; color: #1f2a37; }
+      .purchase-total-box strong { font-size: 1.15rem; color: #0f172a; }
+      .cart-item strong { color: #1f2a37; }
+      .cart-item-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: #334155;
       }
       .empty-state {
         padding: 22px 12px;
@@ -100,25 +239,39 @@
         margin-top: 18px;
         padding: 10px 12px;
         border-radius: 10px;
-        background: rgba(220, 53, 69, 0.08);
-        border: 1px solid rgba(220, 53, 69, 0.2);
+        background: #fff1f2;
+        border: 1px solid #fecdd3;
         color: #a51b2b;
         font-weight: 700;
         font-size: 0.9rem;
         display: none;
       }
+      @media (max-width: 900px) {
+        .white-box { margin-left: 90px; width: calc(100% - 110px); }
+      }
       @media (max-width: 640px) {
-        .item-row {
-          grid-template-columns: 1fr;
-        }
-        .save-btn {
-          width: 100%;
-        }
+        .white-box { margin-left: 68px; width: calc(100% - 80px); }
+        .item-row { grid-template-columns: 1fr; }
+        .save-btn { width: 100%; }
       }
     </style>
   </head>
   <body>
-    <div class="white-box">
+    <aside class="side-menu" aria-label="Menu lateral">
+      <div class="side-menu-header">
+        <button type="button" class="side-menu-toggle" aria-label="Abrir ou fechar menu">☰</button>
+      </div>
+      <nav class="side-menu-nav">
+        <a href="{{ url_for('num_esquece.index') }}">Início</a>
+        <a href="{{ url_for('shopping.list_lists') }}">Minhas listas</a>
+        <a href="{{ url_for('shopping.create_list') }}">Nova lista</a>
+        <a href="{{ url_for('auth.logout') }}">Sair</a>
+        <button type="button" class="side-menu-back" onclick="history.back()">Voltar</button>
+      </nav>
+    </aside>
+
+    <div class="page-shell">
+      <div class="white-box">
       <div class="header">
         <p class="eyebrow">Lista selecionada</p>
         <h1>{{ shopping_list.titulo }}</h1>
@@ -128,6 +281,7 @@
         <div class="items">
           {% for item in shopping_list.items %}
             <form method="post" class="item-form" data-dirty="false">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <input type="hidden" name="item_id" value="{{ item.id }}" />
               <div class="item-row">
                 <div class="item-name">{{ item.nome }}</div>
@@ -139,7 +293,10 @@
                   <label for="preco-{{ item.id }}" style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Preço</label>
                   <input id="preco-{{ item.id }}" type="text" name="preco" value="{{ item.preco or '0,00' }}" />
                 </div>
-                <button type="submit" class="save-btn">Salvar</button>
+                <div class="item-actions">
+                  <button type="submit" class="save-btn">Salvar</button>
+                  <button type="button" class="cart-btn" data-item-id="{{ item.id }}">Coloquei no carrinho</button>
+                </div>
               </div>
             </form>
           {% endfor %}
@@ -148,12 +305,98 @@
         <div class="empty-state">Esta lista ainda não possui produtos cadastrados.</div>
       {% endif %}
 
+      <div class="cart-section" style="margin-top: 26px;">
+        <div class="cart-header">
+          <p class="eyebrow" style="margin: 0;">Itens no seu carrinho</p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="button" id="toggle-quick-add" class="cart-btn">Adicionar item</button>
+            <button type="button" id="move-all-to-cart" class="cart-btn" style="background: #7c3aed;">Mover tudo para carrinho</button>
+          </div>
+        </div>
+
+        <div id="quick-add-container" class="quick-add hidden">
+          <form id="quick-add-form" class="quick-form" method="post" action="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="categoria" value="geral" />
+            <input type="hidden" name="preco_indefinido" value="false" />
+            <div class="field">
+              <label for="quick-name">Nome</label>
+              <input id="quick-name" name="nome" type="text" placeholder="Ex: Café" required />
+            </div>
+            <div class="field">
+              <label for="quick-quantidade">Quantidade</label>
+              <input id="quick-quantidade" name="quantidade" type="text" value="1" required />
+            </div>
+            <div class="field">
+              <label for="quick-preco">Preço</label>
+              <input id="quick-preco" name="preco" type="text" value="0,00" required />
+            </div>
+            <button type="submit" name="submit" value="Adicionar item" class="save-btn" style="height: 42px;">Salvar</button>
+          </form>
+        </div>
+
+        <div class="purchase-total-box">
+          <label for="purchase-total">Valor da compra</label>
+          <strong id="purchase-total">R$ 0,00</strong>
+        </div>
+
+        <div id="cart-items" class="cart-list" aria-live="polite"></div>
+        <div id="empty-cart-state" class="empty-state">Ainda não há itens no carrinho.</div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+        <a href="{{ url_for('shopping.list_lists') }}" class="cart-btn" style="display: inline-block; text-decoration: none; text-align: center; padding: 10px 18px; background: #16a34a;">Finalizar</a>
+      </div>
+
       <div class="unsaved-warning" id="unsaved-warning">Salve as alterações antes de continuar</div>
     </div>
 
     <script>
+      function formatPriceInput(value) {
+        const digitsOnly = (value || '').replace(/\D/g, '');
+
+        if (!digitsOnly) {
+          return '';
+        }
+
+        if (digitsOnly.length === 1) {
+          return `0,0${digitsOnly}`;
+        }
+
+        if (digitsOnly.length === 2) {
+          return `0,${digitsOnly}`;
+        }
+
+        const integerPart = digitsOnly.slice(0, -2).replace(/^0+(?=\d)/, '');
+        const decimalPart = digitsOnly.slice(-2).padStart(2, '0');
+        const normalizedInteger = integerPart || '0';
+        const formattedInteger = normalizedInteger.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return `${formattedInteger},${decimalPart}`;
+      }
+
+      function parsePrice(value) {
+        const normalized = (value || '0,00').replace(/[.]/g, '').replace(',', '.');
+        const parsed = Number(normalized);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function toCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+      }
+
       const warning = document.getElementById('unsaved-warning');
-      const forms = document.querySelectorAll('.item-form');
+      const cartItemsContainer = document.getElementById('cart-items');
+      const emptyCartState = document.getElementById('empty-cart-state');
+      const quickAddContainer = document.getElementById('quick-add-container');
+      const toggleQuickAddButton = document.getElementById('toggle-quick-add');
+      const moveAllButton = document.getElementById('move-all-to-cart');
+      const quickAddForm = document.getElementById('quick-add-form');
+      const cartState = new Map();
+
+      function getForms() {
+        return document.querySelectorAll('.item-form');
+      }
 
       function showWarning() {
         warning.style.display = 'block';
@@ -163,7 +406,19 @@
         warning.style.display = 'none';
       }
 
-      forms.forEach((form) => {
+      function bindPriceInput(input) {
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('autocomplete', 'off');
+
+        input.addEventListener('input', () => {
+          input.value = formatPriceInput(input.value);
+        });
+      }
+
+      function bindFormEvents(form) {
+        if (form.dataset.bound === 'true') return;
+        form.dataset.bound = 'true';
+
         form.addEventListener('input', () => {
           form.dataset.dirty = 'true';
           showWarning();
@@ -173,6 +428,159 @@
           form.dataset.dirty = 'false';
           hideWarning();
         });
+
+        form.querySelectorAll('input[name="preco"]').forEach(bindPriceInput);
+      }
+
+      function createFirstCardItem(item) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.className = 'item-form';
+        form.dataset.dirty = 'false';
+
+        form.innerHTML = `
+          <input type="hidden" name="item_id" value="${item.id}" />
+          <div class="item-row">
+            <div class="item-name">${item.name}</div>
+            <div class="item-meta">
+              <label style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Quantidade</label>
+              <input type="text" name="quantidade" value="${item.quantity}" />
+            </div>
+            <div class="item-meta">
+              <label style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Preço</label>
+              <input type="text" name="preco" value="${item.price}" />
+            </div>
+            <div class="item-actions">
+              <button type="submit" class="save-btn">Salvar</button>
+              <button type="button" class="cart-btn" data-item-id="${item.id}">Coloquei no carrinho</button>
+            </div>
+          </div>
+        `;
+
+        bindFormEvents(form);
+
+        form.querySelector('.cart-btn').addEventListener('click', () => {
+          moveItemToCart(item.id);
+        });
+
+        return form;
+      }
+
+      function refreshFirstCard() {
+        const firstCard = document.querySelector('.items');
+        if (!firstCard) return;
+
+        const forms = Array.from(getForms());
+        const cartItemIds = new Set(Array.from(cartState.keys()));
+        forms.forEach((form) => {
+          const itemId = form.querySelector('input[name="item_id"]')?.value;
+          if (cartItemIds.has(itemId)) {
+            form.remove();
+          }
+        });
+
+        if (firstCard.children.length === 0) {
+          firstCard.innerHTML = '';
+        }
+      }
+
+      function renderCart() {
+        const items = Array.from(cartState.values());
+        cartItemsContainer.innerHTML = '';
+
+        if (!items.length) {
+          cartItemsContainer.style.display = 'none';
+          emptyCartState.style.display = 'block';
+          document.getElementById('purchase-total').textContent = 'R$ 0,00';
+          return;
+        }
+
+        cartItemsContainer.style.display = 'flex';
+        emptyCartState.style.display = 'none';
+
+        let totalPurchase = 0;
+
+        items.forEach((item) => {
+          const total = parsePrice(item.price) * Number(item.quantity || 1);
+          totalPurchase += total;
+
+          const cartItem = document.createElement('div');
+          cartItem.className = 'cart-item';
+          cartItem.innerHTML = `
+            <div class="cart-item-meta">
+              <strong>${item.name}</strong>
+              <span>Quantidade: ${item.quantity}</span>
+              <span>Valor: ${toCurrency(total)}</span>
+            </div>
+            <button type="button" class="remove-cart-btn" data-item-id="${item.id}">Tirar do carrinho</button>
+          `;
+
+          cartItem.querySelector('.remove-cart-btn').addEventListener('click', () => {
+            removeFromCart(item.id);
+          });
+
+          cartItemsContainer.appendChild(cartItem);
+        });
+
+        document.getElementById('purchase-total').textContent = toCurrency(totalPurchase);
+      }
+
+      function toggleQuickAdd() {
+        quickAddContainer.classList.toggle('hidden');
+      }
+
+      function moveItemToCart(itemId) {
+        const itemForm = document.querySelector(`.item-form input[name="item_id"][value="${itemId}"]`)?.closest('.item-form');
+        if (!itemForm) return;
+
+        const quantityInput = itemForm.querySelector('input[name="quantidade"]');
+        const priceInput = itemForm.querySelector('input[name="preco"]');
+        const name = itemForm.querySelector('.item-name')?.textContent?.trim() || 'Item';
+
+        cartState.set(String(itemId), {
+          id: Number(itemId),
+          name,
+          quantity: quantityInput ? quantityInput.value || '1' : '1',
+          price: priceInput ? priceInput.value || '0,00' : '0,00',
+        });
+
+        itemForm.remove();
+        renderCart();
+        refreshFirstCard();
+      }
+
+      function removeFromCart(itemId) {
+        if (!cartState.has(String(itemId))) return;
+
+        const item = cartState.get(String(itemId));
+        cartState.delete(String(itemId));
+
+        const firstCard = document.querySelector('.items');
+        if (firstCard) {
+          firstCard.appendChild(createFirstCardItem(item));
+        }
+
+        renderCart();
+      }
+
+      getForms().forEach(bindFormEvents);
+      document.querySelectorAll('input[name="preco"]').forEach(bindPriceInput);
+      document.querySelectorAll('.cart-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          moveItemToCart(button.dataset.itemId);
+        });
+      });
+
+      toggleQuickAddButton.addEventListener('click', toggleQuickAdd);
+      moveAllButton.addEventListener('click', () => {
+        document.querySelectorAll('.item-form').forEach((form) => {
+          const itemIdInput = form.querySelector('input[name="item_id"]');
+          if (!itemIdInput) return;
+          moveItemToCart(itemIdInput.value);
+        });
+      });
+      document.getElementById('quick-preco').addEventListener('input', () => {
+        document.getElementById('quick-preco').value = formatPriceInput(document.getElementById('quick-preco').value);
       });
 
       document.addEventListener('click', (event) => {
@@ -182,6 +590,7 @@
         const isSubmitButton = target.matches('button[type="submit"]');
         if (isSubmitButton) return;
 
+        const forms = getForms();
         const hasDirtyForm = Array.from(forms).some((form) => form.dataset.dirty === 'true');
         if (hasDirtyForm) {
           event.preventDefault();
@@ -190,12 +599,28 @@
       });
 
       window.addEventListener('beforeunload', (event) => {
+        const forms = getForms();
         const hasDirtyForm = Array.from(forms).some((form) => form.dataset.dirty === 'true');
         if (hasDirtyForm) {
           event.preventDefault();
           event.returnValue = '';
         }
       });
+
+      renderCart();
+
+      const sideMenuToggle = document.querySelector('.side-menu-toggle');
+      if (sideMenuToggle) {
+        sideMenuToggle.addEventListener('click', () => {
+          document.querySelector('.side-menu').style.width = document.querySelector('.side-menu').style.width === '62px' ? '220px' : '62px';
+          const nav = document.querySelector('.side-menu-nav');
+          if (nav) {
+            nav.style.display = nav.style.display === 'none' ? 'flex' : 'none';
+          }
+        });
+      }
     </script>
+      </div>
+    </div>
   </body>
 </html>

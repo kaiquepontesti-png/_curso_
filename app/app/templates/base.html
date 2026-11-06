@@ -8,21 +8,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/num_esquece.css') }}" />
   </head>
   <body class="{% if request.endpoint == 'num_esquece.index' %}home-page{% endif %}">
-    <header class="site-header">
-      <div class="container nav-container">
-        <a href="{{ url_for('num_esquece.index') }}" class="brand">NumEsquece</a>
-        <nav class="nav-links">
+    {% if request.endpoint != 'num_esquece.index' %}
+      <aside class="side-menu" id="side-menu" aria-label="Menu lateral">
+        <div class="side-menu-header">
+          <button type="button" class="side-menu-toggle" id="side-menu-toggle" aria-label="Abrir ou fechar menu">☰</button>
+        </div>
+
+        <nav class="side-menu-nav">
+          <a href="{{ url_for('num_esquece.index') }}">Início</a>
           {% if current_user.is_authenticated %}
             <a href="{{ url_for('shopping.list_lists') }}">Minhas listas</a>
-            <a href="{{ url_for('shopping.create_list') }}" class="btn btn-primary btn-small">Nova lista</a>
+            <a href="{{ url_for('shopping.create_list') }}">Nova lista</a>
             <a href="{{ url_for('auth.logout') }}">Sair</a>
           {% else %}
             <a href="{{ url_for('auth.login') }}">Entrar</a>
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-small">Cadastrar</a>
+            <a href="{{ url_for('auth.register') }}">Cadastrar</a>
           {% endif %}
+          <button type="button" class="side-menu-back" onclick="history.back()">Voltar</button>
         </nav>
-      </div>
-    </header>
+      </aside>
+    {% endif %}
 
     <main class="container page-content">
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -46,6 +51,20 @@
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/num_esquece.js') }}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('side-menu-toggle');
+        const body = document.body;
+
+        if (!toggleButton) {
+          return;
+        }
+
+        toggleButton.addEventListener('click', () => {
+          body.classList.toggle('sidebar-collapsed');
+        });
+      });
+    </script>
     {% block scripts %}{% endblock %}
   </body>
 </html>

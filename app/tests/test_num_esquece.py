@@ -1,6 +1,6 @@
 from app.extensions import db
 from app.models.num_esquece import NumEsquece
-from app.models.shopping import User
+from app.models.shopping import ShoppingItem, ShoppingList, User
 
 
 def test_index_page(client):
@@ -80,3 +80,53 @@ def test_update_and_delete_record(client):
     assert delete_response.status_code == 200
     assert b"Registro removido com sucesso" in delete_response.data
     assert NumEsquece.query.count() == 0
+
+
+def test_selected_list_page_includes_csrf_token_for_item_updates(client, app):
+    app.config["WTF_CSRF_ENABLED"] = False
+
+    user = User(
+        nome="João da Silva",
+        email="joao@email.com",
+        cpf="12345678909",
+    )
+    user.set_password("Abcdef12!")
+    db.session.add(user)
+    db.session.commit()
+
+    with client.session_transaction() as session:
+        session["_user_id"] = str(user.id)
+        session["_fresh"] = True
+
+    shopping_list = ShoppingList(titulo="Lista de mercado", descricao="Itens básicos", user_id=user.id)
+    db.session.add(shopping_list)
+    db.session.flush()
+    db.session.add(
+        ShoppingItem(
+            shopping_list_id=shopping_list.id,
+            nome="Leite",
+            quantidade="1",
+            categoria="mercado",
+            preco="10,00",
+            comprado=False,
+        )
+    )
+    db.session.commit()
+
+    list_response = client.get(f"/listas/{shopping_list.id}/iniciar-selecionada")
+    assert list_response.status_code == 200
+    assert b'name="csrf_token"' in list_response.data
+
+    update_response = client.post(
+        f"/listas/{shopping_list.id}/iniciar-selecionada",
+        data={
+            "item_id": shopping_list.items[0].id,
+            "quantidade": "2",
+            "preco": "15,00",
+        },
+        follow_redirects=False,
+    )
+
+    assert update_response.status_code == 200
+    assert b"Lista selecionada" in update_response.data
+    assert shopping_list.items[0].quantidade == "2"
