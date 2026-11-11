@@ -1,37 +1,82 @@
 {% extends 'base.html' %}
 
-{% block title %}Entrar · NumEsquece{% endblock %}
+{% block title %}Entrar · NumEsquece Lista{% endblock %}
 
 {% block content %}
-<section class="panel form-panel" style="max-width: 520px; margin: 50px auto;">
-  <div class="panel-header" style="display: block;">
-    <h1 style="margin-bottom: 8px;">Entrar</h1>
-    <p style="margin: 0;">Faça login para acessar suas listas de compras.</p>
+<section class="panel form-panel" style="max-width: 480px; margin: 40px auto; padding: 32px 30px;">
+  <div class="panel-header" style="display: block; margin-bottom: 22px;">
+    <p class="eyebrow">Acesso</p>
+    <h1 style="margin-bottom: 8px;">Entrar no NumEsquece Lista</h1>
+    <p style="margin: 0;">Faça login para acessar e sincronizar suas listas de compras.</p>
   </div>
 
-  <form method="post" novalidate>
+  <form method="post" id="login-form" novalidate>
     {{ form.hidden_tag() }}
 
     <div class="field-group">
       {{ form.email.label }}
-      {{ form.email(class_='input-field') }}
+      {{ form.email(class_='input-field', id='login-email', placeholder='seu.email@exemplo.com', autocomplete='email') }}
       {% for error in form.email.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}
+      <span class="field-error client-error" id="login-email-error" style="display: none;"></span>
     </div>
 
     <div class="field-group">
       {{ form.password.label }}
-      {{ form.password(class_='input-field') }}
+      {{ form.password(class_='input-field', placeholder='Sua senha de acesso', autocomplete='current-password') }}
       {% for error in form.password.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}
     </div>
 
-    <div class="form-actions">
-      {{ form.submit(class_='btn btn-primary') }}
-      <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">Criar conta</a>
+    <div class="form-actions" style="margin-top: 26px;">
+      {{ form.submit(class_='btn btn-primary', value='Entrar') }}
+      <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">Criar nova conta</a>
     </div>
   </form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const emailInput = document.getElementById('login-email');
+    const emailError = document.getElementById('login-email-error');
+    const form = document.getElementById('login-form');
+
+    function validateLoginEmail(raw) {
+      const val = (raw || '').trim();
+      if (!val) return 'Informe seu e-mail.';
+      if (!val.includes('@')) return 'E-mail inválido: use o formato seu.nome@exemplo.com.';
+      if (val.replace(/\D/g, '') === val) return 'E-mail inválido: sequências puramente numéricas como 00000000000 não são permitidas.';
+      return null;
+    }
+
+    if (emailInput && emailError && form) {
+      emailInput.addEventListener('input', function () {
+        if (emailError.style.display === 'block') {
+          const err = validateLoginEmail(emailInput.value);
+          if (err) {
+            emailError.textContent = err;
+          } else {
+            emailError.style.display = 'none';
+            emailInput.style.borderColor = '';
+          }
+        }
+      });
+
+      form.addEventListener('submit', function (e) {
+        const err = validateLoginEmail(emailInput.value);
+        if (err) {
+          e.preventDefault();
+          emailError.textContent = err;
+          emailError.style.display = 'block';
+          emailInput.style.borderColor = 'var(--caneta-vermelha-urgencia)';
+          emailInput.focus();
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

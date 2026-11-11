@@ -11,6 +11,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url or "sqlite:///num_esquece.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
+    }
 
 
 class DevelopmentConfig(Config):
@@ -21,6 +25,7 @@ class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_ENGINE_OPTIONS = {}
 
 
 class ProductionConfig(Config):

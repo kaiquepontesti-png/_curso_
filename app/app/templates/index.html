@@ -1,35 +1,93 @@
 {% extends 'base.html' %}
 
-{% block title %}NumEsquece · Sua lista de compras{% endblock %}
+{% block title %}NumEsquece Lista · Caderno de Compras Inteligente{% endblock %}
 
 {% block content %}
 <section class="home-page-shell">
   <header class="home-topbar" aria-label="Cabeçalho do site">
     <div class="home-brand-wrap">
-      <h2 class="home-brand">NumEsquece</h2>
+      <h2 class="home-brand">📝 NumEsquece Lista</h2>
     </div>
-    <p class="home-tagline">Seu sistema de listas com acabamento premium e organização inteligente.</p>
+    <p class="home-tagline">Seu caderno claro de compras com organização tátil e inteligência prática.</p>
   </header>
 
   <div class="home-layout home-layout-tight">
-    <div class="home-menu">
-      <a href="{{ url_for('auth.login') }}" class="home-menu-item">Entrar</a>
-      <a href="{{ url_for('auth.register') }}" class="home-menu-item">Cadastre-se</a>
-      <a href="{{ url_for('num_esquece.duvidas') }}" class="home-menu-item">Dúvidas</a>
-      <a href="{{ url_for('num_esquece.sobre') }}" class="home-menu-item">Sobre</a>
-      <a href="{{ url_for('num_esquece.contato') }}" class="home-menu-item">Contato</a>
-    </div>
+    <nav class="home-menu" aria-label="Menu da página inicial">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('shopping.list_lists') }}" class="home-menu-item home-menu-item-primary">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="menu-icon-wrap" aria-hidden="true">📋</span>
+            <span>Minhas listas</span>
+          </div>
+          <span class="menu-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{{ url_for('shopping.create_list') }}" class="home-menu-item home-menu-item-accent">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="menu-icon-wrap" aria-hidden="true">➕</span>
+            <span>Criar nova lista</span>
+          </div>
+          <span class="menu-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{{ url_for('shopping.completed_purchases') }}" class="home-menu-item">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="menu-icon-wrap" aria-hidden="true">📜</span>
+            <span>Histórico de compras</span>
+          </div>
+          <span class="menu-arrow" aria-hidden="true">→</span>
+        </a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="home-menu-item home-menu-item-primary">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="menu-icon-wrap" aria-hidden="true">🔑</span>
+            <span>Entrar na conta</span>
+          </div>
+          <span class="menu-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="{{ url_for('auth.register') }}" class="home-menu-item home-menu-item-accent">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="menu-icon-wrap" aria-hidden="true">✍️</span>
+            <span>Cadastre-se grátis</span>
+          </div>
+          <span class="menu-arrow" aria-hidden="true">→</span>
+        </a>
+      {% endif %}
+      <a href="{{ url_for('num_esquece.duvidas') }}" class="home-menu-item">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="menu-icon-wrap" aria-hidden="true">❓</span>
+          <span>Dúvidas frequentes</span>
+        </div>
+        <span class="menu-arrow" aria-hidden="true">→</span>
+      </a>
+      <a href="{{ url_for('num_esquece.sobre') }}" class="home-menu-item">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="menu-icon-wrap" aria-hidden="true">💡</span>
+          <span>Sobre o NumEsquece Lista</span>
+        </div>
+        <span class="menu-arrow" aria-hidden="true">→</span>
+      </a>
+      <a href="{{ url_for('num_esquece.contato') }}" class="home-menu-item">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="menu-icon-wrap" aria-hidden="true">✉️</span>
+          <span>Contato e Suporte</span>
+        </div>
+        <span class="menu-arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
 
     <div class="home-showcase" aria-label="Apresentação do produto">
       <div class="luxury-card">
-        <span class="eyebrow luxury-eyebrow">Experiência premium</span>
-        <h3>Organização para o dia a dia, com sofisticação.</h3>
-        <p>Crie listas, acompanhe os itens, atualize preços e mantenha sua rotina mais leve e inteligente.</p>
+        <span class="eyebrow luxury-eyebrow">Doodle & Papelaria · Caderno de Compras</span>
+        <h3>Organização sem esforço dentro do supermercado.</h3>
+        <p>
+          Monte suas listas rapidamente com categorias por corredor, controle itens pegos com um toque pelo polegar,
+          calcule os gastos em tempo real e nunca mais esqueça nenhum item essencial.
+        </p>
 
         <div class="luxury-badges">
-          <span>Listas refinadas</span>
-          <span>Controle rápido</span>
-          <span>Compra inteligente</span>
+          <span>🎨 Fundo Doodle Ilustrado</span>
+          <span>🛒 Carrinho com Total</span>
+          <span>👆 Toque Rápido 44px+</span>
+          <span>📝 Caderno de Compras</span>
         </div>
       </div>
     </div>

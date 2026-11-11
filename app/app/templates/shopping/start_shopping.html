@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Selecionar lista · NumEsquece{% endblock %}
+{% block title %}Selecionar lista para compras · NumEsquece Lista{% endblock %}
 
 {% block content %}
-<section class="panel" style="max-width: 900px; margin: 40px auto; padding: 28px;">
+<section class="panel" style="max-width: 800px; margin: 30px auto; padding: 32px 28px;">
   <div class="panel-header">
-    <h1>Escolha uma lista para continuar</h1>
-    <p>Você tem mais de uma lista cadastrada. Selecione a que deseja usar para iniciar a compra.</p>
+    <p class="eyebrow">Modo Mercado</p>
+    <h1>Escolha uma lista para iniciar</h1>
+    <p>Selecione a lista de compras que você deseja acompanhar no supermercado agora.</p>
   </div>
 
   <div class="record-list compact-list">
     {% for lista in lists %}
       <article class="record-item">
         <div>
-          <p class="record-tag">Lista</p>
+          <span class="category-pill category-pill-blue">🛒 {{ lista.items|length }} {% if lista.items|length == 1 %}item{% else %}itens{% endif %}</span>
           <h3>{{ lista.titulo }}</h3>
           {% if lista.descricao %}
             <p>{{ lista.descricao }}</p>
@@ -21,7 +22,9 @@
         </div>
 
         <div class="record-meta">
-          <a href="{{ url_for('shopping.start_selected_list', list_id=lista.id) }}" class="btn btn-primary btn-small">Selecionar</a>
+          <a href="{{ url_for('shopping.start_selected_list', list_id=lista.id) }}" class="btn btn-hero-shop" aria-label="Iniciar compras com a lista {{ lista.titulo }}">
+            <span>🛒 Iniciar compras</span>
+          </a>
         </div>
       </article>
     {% endfor %}

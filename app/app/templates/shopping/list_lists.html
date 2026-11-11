@@ -1,49 +1,60 @@
 {% extends 'base.html' %}
 
-{% block title %}Minhas listas · NumEsquece{% endblock %}
+{% block title %}Minhas listas · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
   <div>
     <p class="eyebrow">Listas de compras</p>
     <h1>Minhas listas</h1>
+    <p>Gerencie e acompanhe o progresso de cada lista de compras.</p>
   </div>
-  <a href="{{ url_for('shopping.create_list') }}" class="btn btn-primary">Nova lista</a>
+  <a href="{{ url_for('shopping.create_list') }}" class="btn btn-primary">
+    <span>+ Nova lista</span>
+  </a>
 </section>
 
 {% if lists %}
-  <section class="panel">
-    <div class="record-list compact-list">
-      {% for shopping_list in lists %}
-        <article class="record-item">
-          <div>
-            <p class="record-tag">{{ shopping_list.items|length }} itens</p>
-            <h3>{{ shopping_list.titulo }}</h3>
-            {% if shopping_list.descricao %}
-              <p>{{ shopping_list.descricao }}</p>
-            {% endif %}
+  <div class="record-list cards-grid">
+    {% for shopping_list in lists %}
+      <article class="record-item list-card">
+        <div class="list-card-header">
+          <span class="category-pill category-pill-blue">🛒 {{ shopping_list.items|length }} {% if shopping_list.items|length == 1 %}item{% else %}itens{% endif %}</span>
+          <span class="date-badge">📅 {{ shopping_list.updated_at.strftime('%d/%m/%Y') }}</span>
+        </div>
+
+        <div class="list-card-body">
+          <h3 class="list-card-title">{{ shopping_list.titulo }}</h3>
+          {% if shopping_list.descricao %}
+            <p class="list-card-desc">{{ shopping_list.descricao }}</p>
+          {% else %}
+            <p class="list-card-desc" style="color: var(--text-grafite-2h); font-style: italic;">Lista sem descrição adicional.</p>
+          {% endif %}
+        </div>
+
+        <div class="list-card-footer">
+          <div class="card-hero-action">
+            <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-hero-shop">
+              <span>🛒 Vamos comprar?</span>
+            </a>
+            <a href="{{ url_for('shopping.detail_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small">Ver itens</a>
           </div>
 
-          <div class="record-meta">
-            <span class="status-badge status-pendente">Atualizada em {{ shopping_list.updated_at.strftime('%d/%m/%Y') }}</span>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <a href="{{ url_for('shopping.detail_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small">Abrir</a>
-              <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-primary btn-small">Vamos comprar?</a>
-              <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small">Editar</a>
-              <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="btn btn-secondary btn-small">Duplicar</button>
-              </form>
-              <form action="{{ url_for('shopping.delete_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Deseja excluir esta lista?')">Excluir</button>
-              </form>
-            </div>
+          <div class="card-secondary-actions">
+            <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary btn-small" aria-label="Editar lista {{ shopping_list.titulo }}">✏️ Editar</a>
+            <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <button type="submit" class="btn btn-secondary btn-small" aria-label="Duplicar lista {{ shopping_list.titulo }}">📋 Duplicar</button>
+            </form>
+            <form action="{{ url_for('shopping.delete_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Deseja excluir esta lista?')" aria-label="Excluir lista {{ shopping_list.titulo }}">🗑️ Excluir</button>
+            </form>
           </div>
-        </article>
-      {% endfor %}
-    </div>
-  </section>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
 {% else %}
   <section class="panel empty-state">
     <p>Ainda não há listas de compras cadastradas.</p>

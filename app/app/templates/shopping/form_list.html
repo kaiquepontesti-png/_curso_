@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ title }} · NumEsquece{% endblock %}
+{% block title %}{{ title }} · NumEsquece Lista{% endblock %}
 
 {% block content %}
-<section class="panel form-panel" style="max-width: 700px; margin: 30px auto;">
+<section class="panel form-panel" style="max-width: 720px; margin: 30px auto;">
   <div class="panel-header">
+    <p class="eyebrow">Organização</p>
     <h1>{{ title }}</h1>
+    <p>Dê um nome claro para sua lista e adicione detalhes para se organizar melhor.</p>
   </div>
 
   <form method="post" novalidate>
@@ -13,7 +15,7 @@
 
     <div class="field-group">
       {{ form.titulo.label }}
-      {{ form.titulo(class_='input-field') }}
+      {{ form.titulo(class_='input-field', placeholder='Ex: Compras da semana / Feira') }}
       {% for error in form.titulo.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}
@@ -21,7 +23,7 @@
 
     <div class="field-group">
       {{ form.descricao.label }}
-      {{ form.descricao(class_='input-field textarea-field') }}
+      {{ form.descricao(class_='input-field textarea-field', placeholder='Adicione observações opcionais sobre esta lista') }}
       {% for error in form.descricao.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}

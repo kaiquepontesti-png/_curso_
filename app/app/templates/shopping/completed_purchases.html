@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de compras · NumEsquece Lista{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Histórico</p>
+    <h1>Histórico de compras</h1>
+    <p>Consulte suas compras finalizadas e os valores totais economizados.</p>
+  </div>
+  <a href="{{ url_for('shopping.list_lists') }}" class="btn btn-primary">
+    <span>Voltar para listas</span>
+  </a>
+</section>
+
+{% if latest_purchase %}
+  <section class="panel">
+    <div class="purchase-summary-header">
+      <div>
+        <p class="eyebrow">Última compra realizada</p>
+        <h2>{{ latest_purchase['purchase'].titulo }}</h2>
+      </div>
+      <span class="status-badge status-concluido">{{ latest_purchase['purchase'].data_compra.strftime('%d/%m/%Y') }}</span>
+    </div>
+
+    <div class="purchase-summary-grid">
+      <div class="summary-card">
+        <span class="summary-label">Data da compra</span>
+        <strong style="font-size: 1.35rem; color: #000000;">📅 {{ latest_purchase['purchase'].data_compra.strftime('%d/%m/%Y') }}</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Preço total da compra</span>
+        <strong style="color: #000000; font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800;">{{ latest_purchase['purchase'].total_compra }}</strong>
+      </div>
+    </div>
+
+    <div class="purchase-items-block">
+      <h3>Itens adquiridos ({{ latest_items|length }})</h3>
+      <div class="purchase-items-list items-dual-grid">
+        {% for item in latest_items %}
+          <div class="purchase-item-row">
+            <div>
+              <span class="item-name">{{ item.nome }}</span>
+            </div>
+            <div>
+              <span class="detail-badge detail-badge-qty">Qtd: <strong>{{ item.quantidade }}</strong></span>
+            </div>
+            <div>
+              <span class="detail-badge detail-badge-price">R$ <strong>{{ item.preco }}</strong></span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% else %}
+  <section class="panel empty-state">
+    <p>Ainda não há compras salvas no histórico.</p>
+    <a href="{{ url_for('shopping.list_lists') }}" class="btn btn-primary">Ir para minhas listas</a>
+  </section>
+{% endif %}
+
+{% if purchases|length > 1 %}
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Histórico anterior</h2>
+    </div>
+
+    <div class="record-list cards-grid">
+      {% for purchase_entry in purchases[1:] %}
+        <article class="record-item list-card">
+          <div class="list-card-header">
+            <span class="category-pill category-pill-blue">📅 {{ purchase_entry['purchase'].data_compra.strftime('%d/%m/%Y') }}</span>
+            <span class="status-badge status-concluido">{{ purchase_entry['items']|length }} itens</span>
+          </div>
+          <div class="list-card-body">
+            <h3 class="list-card-title">{{ purchase_entry['purchase'].titulo }}</h3>
+            <p style="color: #000000; font-weight: 800; font-size: 1.25rem; font-family: var(--font-mono); margin: 6px 0 0;">{{ purchase_entry['purchase'].total_compra }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

@@ -4,7 +4,7 @@ from sqlalchemy import inspect, text
 from app.config import config
 from app.extensions import csrf, db, login_manager, migrate
 from app.models.num_esquece import NumEsquece
-from app.models.shopping import ShoppingItem, ShoppingList, User
+from app.models.shopping import CompletedPurchase, ShoppingItem, ShoppingList, User
 from app.routes.auth_routes import auth_bp
 from app.routes.num_esquece_routes import num_esquece_bp
 from app.routes.shopping_routes import shopping_bp
@@ -31,6 +31,25 @@ def ensure_shopping_item_schema():
         db.session.commit()
 
 
+def ensure_shopping_list_schema():
+    inspector = inspect(db.engine)
+    columns = [column["name"] for column in inspector.get_columns("shopping_lists")]
+    if "finalizado" not in columns:
+        db.session.execute(text("ALTER TABLE shopping_lists ADD COLUMN finalizado BOOLEAN NOT NULL DEFAULT 0"))
+        db.session.commit()
+
+
+def ensure_completed_purchase_schema():
+    inspector = inspect(db.engine)
+    tables = inspector.get_table_names()
+    if "completed_purchases" not in tables:
+        return
+    columns = [column["name"] for column in inspector.get_columns("completed_purchases")]
+    if "data_compra" not in columns:
+        db.session.execute(text("ALTER TABLE completed_purchases ADD COLUMN data_compra DATETIME"))
+        db.session.commit()
+
+
 def ensure_num_esquece_schema():
     inspector = inspect(db.engine)
     columns = [column["name"] for column in inspector.get_columns("num_esquece")]
@@ -52,6 +71,8 @@ def create_app(config_name: str = "default") -> Flask:
         db.create_all()
         ensure_user_schema()
         ensure_shopping_item_schema()
+        ensure_shopping_list_schema()
+        ensure_completed_purchase_schema()
         ensure_num_esquece_schema()
 
     app.register_blueprint(auth_bp)

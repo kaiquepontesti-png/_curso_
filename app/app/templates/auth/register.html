@@ -1,61 +1,64 @@
 {% extends 'base.html' %}
 
-{% block title %}Criar conta · NumEsquece{% endblock %}
+{% block title %}Criar conta · NumEsquece Lista{% endblock %}
 
 {% block content %}
-<section class="panel form-panel" style="max-width: 640px; margin: 50px auto; padding: 28px 28px 24px;">
-  <div class="panel-header" style="display: block; margin-bottom: 18px;">
-    <h1 style="margin-bottom: 8px;">Criar conta</h1>
-    <p style="margin: 0;">Cadastre-se para começar a organizar suas listas de compras.</p>
+<section class="panel form-panel" style="max-width: 580px; margin: 40px auto; padding: 32px 30px;">
+  <div class="panel-header" style="display: block; margin-bottom: 22px;">
+    <p class="eyebrow">Novo Usuário</p>
+    <h1 style="margin-bottom: 8px;">Criar sua conta</h1>
+    <p style="margin: 0;">Cadastre-se para começar a organizar suas listas de compras e compras no supermercado.</p>
   </div>
 
-  <form method="post" novalidate>
+  <form method="post" id="register-form" novalidate>
     {{ form.hidden_tag() }}
 
-    <div class="field-group">
+    <div class="field-group" id="group-nome">
       {{ form.nome.label }}
-      {{ form.nome(class_='input-field') }}
+      {{ form.nome(class_='input-field', id='nome-input', placeholder='Seu nome completo', autocomplete='name') }}
       {% for error in form.nome.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="group-email">
       {{ form.email.label }}
-      {{ form.email(class_='input-field', autocomplete='email') }}
+      {{ form.email(class_='input-field', id='email-input', placeholder='seu.email@exemplo.com', autocomplete='email') }}
       {% for error in form.email.errors %}
-        <span class="field-error">{{ error }}</span>
+        <span class="field-error server-error">{{ error }}</span>
       {% endfor %}
+      <span class="field-error client-error" id="email-client-error" style="display: none;"></span>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="group-cpf">
       {{ form.cpf.label }}
-      {{ form.cpf(class_='input-field', id='cpf-input', maxlength='14', inputmode='numeric', autocomplete='off') }}
+      {{ form.cpf(class_='input-field', id='cpf-input', maxlength='14', inputmode='numeric', autocomplete='off', placeholder='000.000.000-00') }}
       {% for error in form.cpf.errors %}
-        <span class="field-error">{{ error }}</span>
+        <span class="field-error server-error">{{ error }}</span>
       {% endfor %}
+      <span class="field-error client-error" id="cpf-client-error" style="display: none;"></span>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="group-password">
       {{ form.password.label }}
       <div class="password-field-wrap">
-        {{ form.password(class_='input-field password-input', minlength='8', autocomplete='new-password', id='password') }}
-        <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar senha" title="Mostrar senha">
-          <span>👁️</span>
+        {{ form.password(class_='input-field password-input', minlength='8', autocomplete='new-password', id='password', placeholder='Crie uma senha forte') }}
+        <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar ou ocultar senha" title="Mostrar ou ocultar senha">
+          <span aria-hidden="true">👁️</span>
         </button>
       </div>
       {% for error in form.password.errors %}
         <span class="field-error">{{ error }}</span>
       {% endfor %}
-      <small class="field-hint">Mínimo 8 caracteres, incluindo maiúscula, minúscula, número e caractere especial.</small>
+      <small class="field-hint">Mínimo 8 caracteres, com maiúscula, minúscula, número e caractere especial.</small>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="group-confirm-password">
       {{ form.confirm_password.label }}
       <div class="password-field-wrap">
-        {{ form.confirm_password(class_='input-field password-input', minlength='8', autocomplete='new-password', id='confirm_password') }}
-        <button type="button" class="toggle-password" data-target="confirm_password" aria-label="Mostrar senha" title="Mostrar senha">
-          <span>👁️</span>
+        {{ form.confirm_password(class_='input-field password-input', minlength='8', autocomplete='new-password', id='confirm_password', placeholder='Repita a senha') }}
+        <button type="button" class="toggle-password" data-target="confirm_password" aria-label="Mostrar ou ocultar confirmação de senha" title="Mostrar ou ocultar confirmação de senha">
+          <span aria-hidden="true">👁️</span>
         </button>
       </div>
       {% for error in form.confirm_password.errors %}
@@ -63,8 +66,8 @@
       {% endfor %}
     </div>
 
-    <div class="form-actions">
-      {{ form.submit(class_='btn btn-primary') }}
+    <div class="form-actions" style="margin-top: 26px;">
+      {{ form.submit(class_='btn btn-primary', value='Cadastrar') }}
       <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Já tenho conta</a>
     </div>
   </form>
@@ -75,7 +78,112 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const cpfInput = document.getElementById('cpf-input');
+    const cpfError = document.getElementById('cpf-client-error');
+    const emailInput = document.getElementById('email-input');
+    const emailError = document.getElementById('email-client-error');
+    const form = document.getElementById('register-form');
+
+    // Validador de CPF (Módulo 11 oficial da Receita Federal)
+    function validateCPF(cpfString) {
+      const digits = (cpfString || '').replace(/\D/g, '');
+      if (!digits) return 'Informe seu CPF.';
+      if (digits.length !== 11) return 'CPF incompleto. Use o formato 000.000.000-00.';
+      
+      // Rejeita sequências repetidas como 000.000.000-00, 111.111.111-11, etc.
+      const isRepeated = /^(\d)\1{10}$/.test(digits);
+      if (isRepeated) {
+        return 'CPF inválido: sequências repetidas como 000.000.000-00 não são permitidas.';
+      }
+
+      // 1º Dígito verificador
+      let sum1 = 0;
+      for (let i = 0; i < 9; i++) {
+        sum1 += parseInt(digits.charAt(i), 10) * (10 - i);
+      }
+      let r1 = sum1 % 11;
+      let d1 = r1 < 2 ? 0 : 11 - r1;
+      if (parseInt(digits.charAt(9), 10) !== d1) {
+        return 'CPF inválido: certifique-se de digitar um CPF real e válido.';
+      }
+
+      // 2º Dígito verificador
+      let sum2 = 0;
+      for (let i = 0; i < 10; i++) {
+        sum2 += parseInt(digits.charAt(i), 10) * (11 - i);
+      }
+      let r2 = sum2 % 11;
+      let d2 = r2 < 2 ? 0 : 11 - r2;
+      if (parseInt(digits.charAt(10), 10) !== d2) {
+        return 'CPF inválido: certifique-se de digitar um CPF real e válido.';
+      }
+
+      return null; // Válido!
+    }
+
+    // Validador de E-mail
+    function validateEmail(emailString) {
+      const raw = (emailString || '').trim();
+      if (!raw) return 'Informe seu e-mail.';
+      if (!raw.includes('@')) return 'E-mail inválido: use o formato seu.nome@exemplo.com.';
+
+      const parts = raw.split('@');
+      if (parts.length !== 2) return 'E-mail inválido: deve conter apenas um @.';
+
+      const [user, domain] = parts;
+      if (user.length < 2) return 'E-mail inválido: o nome antes do @ deve ter pelo menos 2 caracteres.';
+
+      // Rejeita sequências de dígitos repetidos como 00000000000
+      const userClean = user.replace(/[\.\_\+\-]/g, '');
+      if (userClean.length >= 2 && new Set(userClean.split('')).size === 1) {
+        return 'E-mail inválido: sequências repetidas como 00000000000 não são permitidas.';
+      }
+      if (/^\d+$/.test(userClean) && (userClean.length < 4 || new Set(userClean.split('')).size <= 2)) {
+        return 'E-mail inválido: não utilize apenas números repetidos ou fictícios.';
+      }
+
+      if (!domain.includes('.')) {
+        return 'E-mail inválido: o domínio deve conter uma extensão válida (ex: .com ou .com.br).';
+      }
+
+      const domainParts = domain.split('.');
+      const tld = domainParts[domainParts.length - 1];
+      if (!/^[a-zA-Z]{2,}$/.test(tld)) {
+        return 'E-mail inválido: a extensão final do domínio deve ter pelo menos 2 letras (ex: .com, .br).';
+      }
+
+      const mainDomain = domainParts[0];
+      if (/^\d+$/.test(mainDomain) || (mainDomain.length >= 2 && new Set(mainDomain.split('')).size === 1)) {
+        return 'E-mail inválido: o domínio informado não é válido.';
+      }
+
+      const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+      if (!emailRegex.test(raw)) {
+        return 'E-mail inválido: contém caracteres não permitidos.';
+      }
+
+      const blacklist = ['teste@teste.com', 'test@test.com', 'admin@admin.com', 'fake@fake.com', 'exemplo@exemplo.com'];
+      if (blacklist.includes(raw.toLowerCase())) {
+        return 'E-mail inválido: informe um endereço de e-mail real.';
+      }
+
+      return null; // Válido!
+    }
+
+    function setFieldError(inputEl, errorEl, message) {
+      if (!inputEl || !errorEl) return;
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        inputEl.style.borderColor = 'var(--caneta-vermelha-urgencia)';
+      } else {
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+        inputEl.style.borderColor = '';
+      }
+    }
+
     if (cpfInput) {
+      // Máscara dinâmica de formatação
       cpfInput.addEventListener('input', function () {
         const value = cpfInput.value.replace(/\D/g, '').slice(0, 11);
         let formatted = value;
@@ -89,9 +197,70 @@
         }
 
         cpfInput.value = formatted;
+
+        // Limpa erro ao digitar se atingir tamanho válido
+        if (value.length === 11) {
+          const err = validateCPF(formatted);
+          setFieldError(cpfInput, cpfError, err);
+        } else {
+          setFieldError(cpfInput, cpfError, null);
+        }
+      });
+
+      cpfInput.addEventListener('blur', function () {
+        if (cpfInput.value.trim().length > 0) {
+          const err = validateCPF(cpfInput.value);
+          setFieldError(cpfInput, cpfError, err);
+        }
       });
     }
 
+    if (emailInput) {
+      emailInput.addEventListener('input', function () {
+        // Se já estava com erro, revalida em tempo real
+        if (emailError.style.display === 'block') {
+          const err = validateEmail(emailInput.value);
+          setFieldError(emailInput, emailError, err);
+        }
+      });
+
+      emailInput.addEventListener('blur', function () {
+        if (emailInput.value.trim().length > 0) {
+          const err = validateEmail(emailInput.value);
+          setFieldError(emailInput, emailError, err);
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        let hasError = false;
+
+        if (cpfInput) {
+          const cpfErr = validateCPF(cpfInput.value);
+          setFieldError(cpfInput, cpfError, cpfErr);
+          if (cpfErr) {
+            hasError = true;
+            cpfInput.focus();
+          }
+        }
+
+        if (emailInput) {
+          const emailErr = validateEmail(emailInput.value);
+          setFieldError(emailInput, emailError, emailErr);
+          if (emailErr && !hasError) {
+            hasError = true;
+            emailInput.focus();
+          }
+        }
+
+        if (hasError) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    // Toggle de visualização de senha
     const toggleButtons = document.querySelectorAll('.toggle-password');
     toggleButtons.forEach((button) => {
       const targetId = button.dataset.target;
@@ -99,26 +268,10 @@
 
       if (!passwordInput) return;
 
-      button.addEventListener('mousedown', function (event) {
-        event.preventDefault();
-        passwordInput.type = 'text';
-      });
-
-      button.addEventListener('mouseup', function () {
-        passwordInput.type = 'password';
-      });
-
-      button.addEventListener('mouseleave', function () {
-        passwordInput.type = 'password';
-      });
-
-      button.addEventListener('touchstart', function (event) {
-        event.preventDefault();
-        passwordInput.type = 'text';
-      }, { passive: false });
-
-      button.addEventListener('touchend', function () {
-        passwordInput.type = 'password';
+      button.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        button.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Show senha');
       });
     });
   });

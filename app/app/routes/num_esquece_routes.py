@@ -41,7 +41,7 @@ def duvidas():
         },
         {
             "pergunta": "É necessário pagar para usar o site?",
-            "resposta": "Não. O NumEsquece foi pensado para uso gratuito e simples para ajudar na organização das compras do dia a dia."
+            "resposta": "Não. O NumEsquece Lista foi pensado para uso gratuito e simples para ajudar na organização das compras do dia a dia."
         },
         {
             "pergunta": "Posso acessar o site em qualquer navegador?",
@@ -60,7 +60,7 @@ def sobre():
     historia = [
         {
             "titulo": "A ideia",
-            "texto": "O NumEsquece nasceu de uma necessidade simples: organizar compras sem perder tempo ou esquecer itens importantes."
+            "texto": "O NumEsquece Lista nasceu de uma necessidade simples: organizar compras sem perder tempo ou esquecer itens importantes."
         },
         {
             "titulo": "A criação",
@@ -83,7 +83,7 @@ def contato():
     contato_info = [
         {
             "titulo": "Atendimento",
-            "valor": "atendimento@numesquece.com.br",
+            "valor": "atendimento@numesquecelista.com.br",
             "descricao": "Para dúvidas, sugestões e suporte geral."
         },
         {
@@ -98,7 +98,7 @@ def contato():
         },
         {
             "titulo": "Redes sociais",
-            "valor": "@numesquece",
+            "valor": "@numesquecelista",
             "descricao": "Siga o projeto para acompanhar novidades e atualizações."
         }
     ]

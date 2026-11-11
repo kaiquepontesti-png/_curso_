@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}Registros · NumEsquece{% endblock %}
+{% block title %}Registros · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
   <div>
-    <p class="eyebrow">Consulta</p>
+    <p class="eyebrow">Consulta Geral</p>
     <h1>Registros</h1>
+    <p>Consulte todos os registros salvos na biblioteca do sistema.</p>
   </div>
-  <a href="{{ url_for('num_esquece.create_record') }}" class="btn btn-primary">Novo registro</a>
+  <a href="{{ url_for('num_esquece.create_record') }}" class="btn btn-primary">
+    <span>+ Novo registro</span>
+  </a>
 </section>
 
 <form method="get" action="{{ url_for('num_esquece.list_records') }}" class="toolbar-search">
-  <input type="text" name="q" value="{{ search or '' }}" placeholder="Buscar por título, categoria ou descrição" />
+  <input type="text" name="q" value="{{ search or '' }}" placeholder="Buscar por título, categoria ou descrição..." class="input-field" aria-label="Buscar registros" />
   <button type="submit" class="btn btn-primary">Buscar</button>
   {% if search %}
     <a href="{{ url_for('num_esquece.list_records') }}" class="btn btn-secondary">Limpar</a>
@@ -35,8 +38,8 @@
         <tbody>
           {% for record in records %}
             <tr>
-              <td>{{ record.titulo }}</td>
-              <td>{{ record.categoria }}</td>
+              <td><strong>{{ record.titulo }}</strong></td>
+              <td><span class="category-pill">{{ record.categoria }}</span></td>
               <td><span class="status-badge status-{{ record.status }}">{{ record.status.replace('_', ' ') }}</span></td>
               <td>{{ record.data_vencimento.strftime('%d/%m/%Y') if record.data_vencimento else '—' }}</td>
               <td class="actions-cell">
@@ -44,7 +47,7 @@
                 <a href="{{ url_for('num_esquece.edit_record', record_id=record.id) }}" class="btn btn-secondary btn-small">Editar</a>
                 <form action="{{ url_for('num_esquece.delete_record', record_id=record.id) }}" method="post" class="inline-form">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                  <button type="submit" class="btn btn-danger btn-small" data-confirm="Deseja realmente excluir este registro?">Excluir</button>
+                  <button type="submit" class="btn btn-danger btn-small" data-confirm="Deseja realmente excluir este registro?" aria-label="Excluir {{ record.titulo }}">Excluir</button>
                 </form>
               </td>
             </tr>

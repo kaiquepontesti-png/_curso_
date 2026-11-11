@@ -1,0 +1,25 @@
+name: NumEsqueceLista
+options:
+  bundleIdPrefix: com.numesquece
+  deploymentTarget:
+    iOS: "15.0"
+targets:
+  NumEsqueceLista:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: Sources
+    resources:
+      - path: Resources/index.html
+      - path: Assets.xcassets
+    info:
+      path: Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.numesquece.lista
+        PRODUCT_NAME: NumEsqueceLista
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.9"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

@@ -1,0 +1,4 @@
+# Aplicativo Mobile NumEsquece Lista - 100% Python Puro (Biblioteca Padrão)
+# Nenhum servidor web ou banco de dados externo necessário.
+# Apenas pytest é opcional para rodar os testes automatizados das classes.
+pytest>=8.0.0

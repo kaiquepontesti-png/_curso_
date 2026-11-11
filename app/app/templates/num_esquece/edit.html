@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar registro · NumEsquece{% endblock %}
+{% block title %}Editar registro · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
   <div>
     <p class="eyebrow">Atualização</p>
     <h1>Editar registro</h1>
+    <p>Altere os dados do registro <strong>{{ record.titulo }}</strong></p>
   </div>
 </section>
 
@@ -57,8 +58,8 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Atualizar registro</button>
-      <a href="{{ url_for('num_esquece.detail_record', record_id=record.id) }}" class="btn btn-secondary">Voltar</a>
+      <button type="submit" class="btn btn-primary">Salvar alterações</button>
+      <a href="{{ url_for('num_esquece.detail_record', record_id=record.id) }}" class="btn btn-secondary">Cancelar</a>
     </div>
   </form>
 </section>

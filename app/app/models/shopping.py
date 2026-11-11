@@ -22,6 +22,7 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=utc_now, onupdate=utc_now)
 
     shopping_lists = db.relationship("ShoppingList", back_populates="user", cascade="all, delete-orphan")
+    completed_purchases = db.relationship("CompletedPurchase", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -40,6 +41,7 @@ class ShoppingList(db.Model):
     titulo = db.Column(db.String(120), nullable=False)
     descricao = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    finalizado = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=utc_now)
     updated_at = db.Column(db.DateTime, nullable=False, default=utc_now, onupdate=utc_now)
 
@@ -73,3 +75,24 @@ class ShoppingItem(db.Model):
 
     def __repr__(self):
         return f"<ShoppingItem {self.nome}>"
+
+
+class CompletedPurchase(db.Model):
+    __tablename__ = "completed_purchases"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    shopping_list_id = db.Column(db.Integer, db.ForeignKey("shopping_lists.id", ondelete="SET NULL"), nullable=True, index=True)
+    titulo = db.Column(db.String(120), nullable=False)
+    descricao = db.Column(db.Text, nullable=True)
+    data_compra = db.Column(db.DateTime, nullable=False, default=utc_now)
+    total_compra = db.Column(db.String(30), nullable=False, default="0,00")
+    itens = db.Column(db.Text, nullable=False, default="[]")
+    created_at = db.Column(db.DateTime, nullable=False, default=utc_now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=utc_now, onupdate=utc_now)
+
+    user = db.relationship("User", back_populates="completed_purchases")
+    shopping_list = db.relationship("ShoppingList")
+
+    def __repr__(self):
+        return f"<CompletedPurchase {self.titulo}>"

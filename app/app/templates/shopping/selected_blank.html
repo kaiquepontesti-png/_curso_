@@ -3,352 +3,596 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista selecionada · NumEsquece</title>
+    <title>Lista selecionada · NumEsquece Lista</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/num_esquece.css') }}" />
     <style>
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: 'Public Sans', Arial, Helvetica, sans-serif;
-        background: linear-gradient(180deg, #f4f7ff 0%, #edf3ff 18%, #f8f7f2 100%);
-        color: #1f2a37;
-      }
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background-image: url('/static/images/fundo.jpg');
-        background-repeat: repeat;
-        background-size: auto;
-        background-position: center center;
-        opacity: 0.08;
-        pointer-events: none;
-      }
-      .page-shell {
-        position: relative;
-        z-index: 1;
-        width: min(1100px, calc(100% - 32px));
-        margin: 0 auto;
-        padding: 24px 0 40px;
-      }
-      .side-menu {
-        position: fixed;
-        top: 18px;
-        left: 18px;
-        width: 220px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 22px;
-        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
-        z-index: 50;
-      }
-      .side-menu-header { display: flex; justify-content: flex-end; padding: 12px 12px 8px; }
-      .side-menu-toggle {
-        width: 38px; height: 38px; border: 1px solid #e2e8f0; border-radius: 12px;
-        background: #f5f7ff; color: #111827; font-size: 1.2rem; font-weight: 700; cursor: pointer;
-      }
-      .side-menu-nav {
-        display: flex; flex-direction: column; gap: 10px; padding: 0 12px 16px;
-      }
-      .side-menu-nav a, .side-menu-back {
-        display: flex; align-items: center; justify-content: center; width: 100%; min-height: 46px; padding: 10px 12px;
-        border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; color: #111827; text-decoration: none; font-weight: 700; cursor: pointer;
-      }
-      .side-menu-nav a:hover, .side-menu-back:hover, .side-menu-toggle:hover { background: #edf3ff; }
       .white-box {
-        width: min(980px, calc(100% - 32px));
-        min-height: 300px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 26px;
-        box-shadow: 0 20px 40px rgba(31, 42, 55, 0.12);
-        padding: 28px 26px;
-        margin-left: 260px;
+        width: 100%;
+        background: #FFFFFF;
+        border: 2px solid #000000;
+        border-radius: 14px;
+        box-shadow: 4px 4px 0px #000000;
+        padding: 30px 32px;
+        margin: 0 auto;
       }
+
       .header {
-        margin-bottom: 22px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #edf2f7;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #000000;
       }
-      .eyebrow {
-        margin: 0 0 8px;
-        color: #2f6fed;
-        font-size: 0.74rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-      h1 {
-        margin: 0;
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        color: #1f2a37;
-      }
+
       .items {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 14px;
       }
+
       .item-row {
         display: grid;
-        grid-template-columns: minmax(0, 2fr) 150px 150px minmax(190px, 220px);
-        gap: 12px;
-        padding: 16px 18px;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        background: #ffffff;
-        align-items: start;
-        min-height: 120px;
-        box-shadow: 0 12px 22px rgba(15, 23, 42, 0.04);
+        grid-template-columns: minmax(0, 2fr) 130px 140px minmax(220px, auto);
+        gap: 16px;
+        padding: 18px 22px;
+        border: 2px solid #000000;
+        border-radius: 10px;
+        background: #FFFFFF;
+        align-items: end;
+        box-shadow: 3px 3px 0px #000000;
+        transition: all 0.15s ease-in-out;
       }
+
+      .item-row:hover {
+        border-color: #000000;
+        box-shadow: 4px 4px 0px #000000;
+        transform: translate(-1px, -1px);
+      }
+
       .item-name {
         font-weight: 700;
-        color: #1f2a37;
+        font-size: 1.15rem;
+        color: #000000;
+        line-height: 1.4;
+        word-break: break-word;
+        padding-bottom: 4px;
       }
+
       .item-meta {
-        color: #4b5563;
-        font-size: 0.96rem;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
       }
+
+      .item-meta label {
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #000000;
+      }
+
+      .item-meta input {
+        background: #FFFFFF;
+        border: 2px solid #000000;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #000000;
+        padding: 10px 14px;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .item-meta input::placeholder {
+        color: #757575;
+      }
+
+      .item-meta input:focus {
+        background: #FFFFFF;
+        border-color: #000000;
+        box-shadow: 3px 3px 0px #000000;
+        outline: none;
+      }
+
       .item-form {
         display: contents;
       }
-      .item-form input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #dfe3ec;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        background: #fff;
-      }
+
       .item-actions {
         display: flex;
         flex-direction: row;
-        gap: 12px;
+        gap: 10px;
         align-items: center;
         justify-content: flex-end;
         flex-wrap: wrap;
-        min-height: 84px;
       }
-      .save-btn,
-      .cart-btn,
-      .remove-cart-btn {
-        border: none;
-        border-radius: 12px;
-        color: #fff;
-        font-weight: 700;
-        padding: 9px 12px;
-        font-size: 0.72rem;
-        cursor: pointer;
-        box-shadow: 0 12px 18px rgba(31, 42, 55, 0.08);
-      }
+
       .save-btn {
-        background: linear-gradient(135deg, #2f6fed 0%, #5f8ffc 100%);
-        width: 56px;
-        min-width: 56px;
+        min-width: 78px;
+        padding: 10px 16px;
+        height: 46px;
+        border-radius: 8px;
+        font-weight: 600;
       }
-      .cart-btn {
-        background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+
+      .cart-section {
+        margin-top: 36px;
+        padding-top: 24px;
+        border-top: 2px solid #000000;
       }
-      .remove-cart-btn {
-        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-      }
+
       .cart-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 18px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #edf2f7;
+        gap: 14px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #000000;
+        flex-wrap: wrap;
       }
+
       .quick-add {
         display: flex;
         flex-direction: column;
         gap: 12px;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
-      .quick-add.hidden { display: none; }
+
+      .quick-add.hidden {
+        display: none;
+      }
+
       .quick-add .quick-form {
         display: grid;
-        grid-template-columns: minmax(0, 2fr) 150px 150px auto;
+        grid-template-columns: minmax(0, 2fr) 130px 140px auto;
         gap: 12px;
-        padding: 14px 16px;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        background: #f8fafc;
+        padding: 18px 20px;
+        border: 2px solid #000000;
+        border-radius: 10px;
+        background: #FFFFFF;
         align-items: end;
+        box-shadow: 3px 3px 0px #000000;
       }
+
       .quick-add .field {
         display: flex;
         flex-direction: column;
         gap: 6px;
-        color: #4b5563;
-        font-size: 0.9rem;
       }
-      .quick-add .field input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #dfe3ec;
+
+      .quick-add .field label {
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #000000;
+      }
+
+      .purchase-total-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 0 20px;
+        padding: 18px 24px;
+        border: 2px solid #000000;
         border-radius: 10px;
-        background: #fff;
+        background: #FFFFFF;
+        width: 100%;
+        box-shadow: 4px 4px 0px #000000;
       }
+
+      .purchase-total-box label {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        color: #000000;
+      }
+
+      .purchase-total-box strong {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #000000;
+        font-family: var(--font-mono);
+      }
+
       .cart-list {
         display: flex;
         flex-direction: column;
         gap: 12px;
       }
+
       .cart-item {
         display: flex;
         justify-content: space-between;
-        gap: 12px;
-        padding: 14px 16px;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        background: #f8fafc;
-      }
-      .purchase-total-box {
-        display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin: 0 0 18px;
-        padding: 10px 14px;
-        border: 1px solid #dfe3ec;
-        border-radius: 12px;
-        background: #f8fafc;
-        max-width: 260px;
-        width: 100%;
+        gap: 16px;
+        padding: 14px 18px;
+        border: 2px solid #000000;
+        border-radius: 8px;
+        background: #FFFFFF;
+        box-shadow: 2px 2px 0px #000000;
+        transition: all 0.15s ease-in-out;
       }
-      .purchase-total-box label { font-weight: 700; color: #1f2a37; }
-      .purchase-total-box strong { font-size: 1.15rem; color: #0f172a; }
-      .cart-item strong { color: #1f2a37; }
+
+      .cart-item:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 3px 3px 0px #000000;
+      }
+
       .cart-item-meta {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        color: #334155;
+        gap: 4px;
       }
-      .empty-state {
-        padding: 22px 12px;
-        text-align: center;
-        color: #64748b;
-        background: #f8fafc;
-        border: 1px dashed #dfe3ec;
-        border-radius: 12px;
-      }
-      .unsaved-warning {
-        margin-top: 18px;
-        padding: 10px 12px;
-        border-radius: 10px;
-        background: #fff1f2;
-        border: 1px solid #fecdd3;
-        color: #a51b2b;
+
+      .cart-item-meta strong {
+        font-size: 1.05rem;
         font-weight: 700;
-        font-size: 0.9rem;
+        color: #000000;
+      }
+
+      .cart-item-meta span {
+        font-size: 0.92rem;
+        color: #757575;
+      }
+
+      .unsaved-warning {
+        margin-top: 20px;
+        padding: 12px 18px;
+        border-radius: 8px;
+        background: #FFFFFF;
+        border: 2px solid #000000;
+        color: #000000;
+        box-shadow: 3px 3px 0px #000000;
+        font-weight: 700;
+        font-size: 0.92rem;
         display: none;
       }
-      @media (max-width: 900px) {
-        .white-box { margin-left: 90px; width: calc(100% - 110px); }
+
+      .confirmation-modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 1200;
       }
-      @media (max-width: 640px) {
-        .white-box { margin-left: 68px; width: calc(100% - 80px); }
-        .item-row { grid-template-columns: 1fr; }
-        .save-btn { width: 100%; }
+
+      .confirmation-modal.hidden {
+        display: none;
+      }
+
+      .confirmation-dialog {
+        width: min(460px, calc(100% - 32px));
+        background: #FFFFFF;
+        border: 2px solid #000000;
+        border-radius: 14px;
+        box-shadow: 6px 6px 0px #000000;
+        padding: 28px 26px;
+      }
+
+      .confirmation-dialog p {
+        margin: 0 0 22px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.4;
+        color: #000000;
+      }
+
+      .confirmation-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .confirmation-btn {
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        min-height: 44px;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .confirmation-btn-yes {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #000000;
+        box-shadow: 3px 3px 0px #000000;
+      }
+
+      .confirmation-btn-yes:hover {
+        background-color: #1A1A1A !important;
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px #000000;
+      }
+
+      .confirmation-btn-yes:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px #000000;
+      }
+
+      .confirmation-btn-no {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 2px solid #000000;
+        box-shadow: 3px 3px 0px #000000;
+      }
+
+      .confirmation-btn-no:hover {
+        background-color: #F5F5F5 !important;
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px #000000;
+      }
+
+      .confirmation-btn-no:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px #000000;
+      }
+
+      #finalize-button {
+        background-color: #000000;
+        color: #FFFFFF !important;
+        font-weight: 600;
+        font-size: 1.05rem;
+        padding: 12px 24px;
+        min-height: 48px;
+        border-radius: 8px;
+        border: 2px solid #000000;
+        box-shadow: 3px 3px 0px #000000;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      #finalize-button:hover {
+        background-color: #1A1A1A;
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px #000000;
+      }
+
+      #finalize-button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px #000000;
+      }
+
+      @media (max-width: 800px) {
+        .item-row {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .item-actions {
+          justify-content: stretch;
+          width: 100%;
+        }
+
+        .item-actions button {
+          flex: 1;
+        }
+
+        .quick-add .quick-form {
+          grid-template-columns: 1fr;
+        }
+
+        .quick-add .quick-form button {
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
-    <aside class="side-menu" aria-label="Menu lateral">
-      <div class="side-menu-header">
-        <button type="button" class="side-menu-toggle" aria-label="Abrir ou fechar menu">☰</button>
-      </div>
-      <nav class="side-menu-nav">
-        <a href="{{ url_for('num_esquece.index') }}">Início</a>
-        <a href="{{ url_for('shopping.list_lists') }}">Minhas listas</a>
-        <a href="{{ url_for('shopping.create_list') }}">Nova lista</a>
-        <a href="{{ url_for('auth.logout') }}">Sair</a>
-        <button type="button" class="side-menu-back" onclick="history.back()">Voltar</button>
-      </nav>
-    </aside>
+    <div class="app-layout">
+      <!-- Backdrop para tela móvel -->
+      <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
 
-    <div class="page-shell">
-      <div class="white-box">
-      <div class="header">
-        <p class="eyebrow">Lista selecionada</p>
-        <h1>{{ shopping_list.titulo }}</h1>
-      </div>
+      <!-- Menu lateral (Sidebar off-canvas / fixa) -->
+      <aside class="side-menu" id="side-menu" aria-label="Menu lateral">
+        <div class="side-menu-header">
+          <a href="{{ url_for('num_esquece.index') }}" class="sidebar-brand">
+            <span class="sidebar-brand-icon" aria-hidden="true">📝</span>
+            <span class="sidebar-brand-text">NumEsquece Lista</span>
+          </a>
+          <button type="button" class="side-menu-toggle" id="side-menu-toggle" aria-label="Fechar menu" aria-controls="side-menu-nav" aria-expanded="true">
+            ✕
+          </button>
+        </div>
+        <nav class="side-menu-nav" id="side-menu-nav" aria-label="Navegação principal">
+          <a href="{{ url_for('num_esquece.index') }}" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">🏠</span>
+            <span>Início</span>
+          </a>
+          <a href="{{ url_for('shopping.list_lists') }}" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">📋</span>
+            <span>Minhas listas</span>
+          </a>
+          <a href="{{ url_for('shopping.completed_purchases') }}" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">📜</span>
+            <span>Histórico</span>
+          </a>
+          <a href="{{ url_for('shopping.create_list') }}" class="nav-link">
+            <span class="nav-icon" aria-hidden="true">➕</span>
+            <span>Nova lista</span>
+          </a>
+          <div class="nav-divider"></div>
+          <a href="{{ url_for('auth.logout') }}" class="nav-link nav-link-logout">
+            <span class="nav-icon" aria-hidden="true">🚪</span>
+            <span>Sair</span>
+          </a>
+          <div class="nav-footer-spacer"></div>
+          <button type="button" class="side-menu-back" onclick="history.back()" aria-label="Voltar para a página anterior">
+            <span aria-hidden="true">←</span>
+            <span>Voltar</span>
+          </button>
+        </nav>
+      </aside>
 
-      {% if shopping_list.items %}
-        <div class="items">
-          {% for item in shopping_list.items %}
-            <form method="post" class="item-form" data-dirty="false">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <input type="hidden" name="item_id" value="{{ item.id }}" />
-              <div class="item-row">
-                <div class="item-name">{{ item.nome }}</div>
-                <div class="item-meta">
-                  <label for="quantidade-{{ item.id }}" style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Quantidade</label>
-                  <input id="quantidade-{{ item.id }}" type="text" name="quantidade" value="{{ item.quantidade }}" />
+      <!-- Conteúdo da Lista Selecionada -->
+      <div class="app-main-wrapper">
+        <!-- Topbar com menu hambúrguer -->
+        <header class="app-topbar" id="app-topbar">
+          <div class="topbar-left">
+            <button
+              type="button"
+              class="topbar-toggle-btn"
+              id="topbar-menu-toggle"
+              aria-label="Abrir menu lateral"
+              aria-controls="side-menu"
+              aria-expanded="false"
+            >
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+            </button>
+            <a href="{{ url_for('num_esquece.index') }}" class="topbar-brand">
+              <span class="brand-icon" aria-hidden="true">📝</span>
+              <span class="brand-name">NumEsquece Lista</span>
+            </a>
+          </div>
+          <div class="topbar-right">
+            <a href="{{ url_for('shopping.list_lists') }}" class="btn btn-secondary btn-small">Minhas listas</a>
+          </div>
+        </header>
+
+        <main class="container page-content">
+          <div class="white-box">
+            <div class="header">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <p class="eyebrow" style="margin: 0 0 4px;">Modo Supermercado</p>
+                  <h1 style="margin: 0;">{{ shopping_list.titulo }}</h1>
                 </div>
-                <div class="item-meta">
-                  <label for="preco-{{ item.id }}" style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Preço</label>
-                  <input id="preco-{{ item.id }}" type="text" name="preco" value="{{ item.preco or '0,00' }}" />
-                </div>
-                <div class="item-actions">
-                  <button type="submit" class="save-btn">Salvar</button>
-                  <button type="button" class="cart-btn" data-item-id="{{ item.id }}">Coloquei no carrinho</button>
+                <div>
+                  <span class="status-badge status-pendente">{{ shopping_list.items|length }} itens na lista</span>
                 </div>
               </div>
-            </form>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="empty-state">Esta lista ainda não possui produtos cadastrados.</div>
-      {% endif %}
+            </div>
 
-      <div class="cart-section" style="margin-top: 26px;">
-        <div class="cart-header">
-          <p class="eyebrow" style="margin: 0;">Itens no seu carrinho</p>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <button type="button" id="toggle-quick-add" class="cart-btn">Adicionar item</button>
-            <button type="button" id="move-all-to-cart" class="cart-btn" style="background: #7c3aed;">Mover tudo para carrinho</button>
+            <div class="shopping-split-layout">
+              <!-- Painel Principal Esquerdo: Produtos da Lista -->
+              <section class="shopping-main-pane">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <h2 style="font-size: 1.25rem; margin: 0;">Produtos para Comprar</h2>
+                  <span style="font-size: 0.88rem; color: var(--text-grafite-2h);">Confirme a quantidade e o preço</span>
+                </div>
+
+                {% if shopping_list.items %}
+                  <div class="items">
+                    {% for item in shopping_list.items %}
+                      <form method="post" class="item-form" data-dirty="false">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="hidden" name="item_id" value="{{ item.id }}" />
+                        <div class="item-row">
+                          <div class="item-name">{{ item.nome }}</div>
+                          <div class="item-meta">
+                            <label for="quantidade-{{ item.id }}">Qtd</label>
+                            <input id="quantidade-{{ item.id }}" type="text" name="quantidade" value="{{ item.quantidade }}" />
+                          </div>
+                          <div class="item-meta">
+                            <label for="preco-{{ item.id }}">Preço</label>
+                            <input id="preco-{{ item.id }}" type="text" name="preco" value="{{ item.preco or '0,00' }}" />
+                          </div>
+                          <div class="item-actions">
+                            <button type="submit" class="save-btn btn-secondary" aria-label="Salvar item {{ item.nome }}">Salvar</button>
+                            <button type="button" class="cart-btn" data-item-id="{{ item.id }}" aria-label="Colocar {{ item.nome }} no carrinho">Coloquei no carrinho</button>
+                          </div>
+                        </div>
+                      </form>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <div class="empty-state">Esta lista ainda não possui produtos cadastrados.</div>
+                {% endif %}
+
+                <div class="unsaved-warning" id="unsaved-warning">Salve as alterações nos itens antes de continuar</div>
+              </section>
+
+              <!-- Painel Lateral Direito Fixo: Resumo do Carrinho e Finalização -->
+              <aside class="shopping-side-pane">
+                <div class="cart-sticky-card">
+                  <div class="cart-header" style="margin-top: 0; padding-top: 0;">
+                    <div>
+                      <p class="eyebrow" style="margin: 0 0 4px;">Carrinho de Compras</p>
+                      <h2 style="font-size: 1.25rem; margin: 0;">Total Estimado</h2>
+                    </div>
+                    <button type="button" id="move-all-to-cart" class="btn btn-secondary btn-small" title="Mover todos os produtos restantes da lista para o carrinho">Mover tudo</button>
+                  </div>
+
+                  <div class="purchase-total-box" style="max-width: none; margin: 16px 0;">
+                    <label for="purchase-total">Valor Total</label>
+                    <strong id="purchase-total">R$ 0,00</strong>
+                  </div>
+
+                  <div style="margin-bottom: 16px;">
+                    <button type="button" id="finalize-button" class="btn btn-primary" style="width: 100%;">Finalizar Compra</button>
+                  </div>
+
+                  <div style="margin-bottom: 16px;">
+                    <button type="button" id="toggle-quick-add" class="btn btn-secondary btn-small" style="width: 100%;">+ Adicionar item rápido</button>
+                  </div>
+
+                  <div id="quick-add-container" class="quick-add hidden">
+                    <form id="quick-add-form" class="quick-form" method="post" action="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" novalidate>
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <input type="hidden" name="categoria" value="geral" />
+                      <input type="hidden" name="preco_indefinido" value="false" />
+                      <div class="field">
+                        <label for="quick-name">Nome do produto</label>
+                        <input id="quick-name" name="nome" type="text" placeholder="Ex: Café em pó" required />
+                      </div>
+                      <div class="field" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div>
+                          <label for="quick-quantidade">Qtd</label>
+                          <input id="quick-quantidade" name="quantidade" type="text" value="1" required />
+                        </div>
+                        <div>
+                          <label for="quick-preco">Preço (R$)</label>
+                          <input id="quick-preco" name="preco" type="text" value="0,00" required />
+                        </div>
+                      </div>
+                      <button type="submit" name="submit" value="Adicionar item" class="save-btn btn-primary" style="width: 100%; height: 44px; margin-top: 8px;">Adicionar ao carrinho</button>
+                    </form>
+                  </div>
+
+                  <div class="cart-items-wrapper" style="max-height: 380px; overflow-y: auto; margin-top: 14px;">
+                    <div id="cart-items" class="cart-list" aria-live="polite"></div>
+                    <div id="empty-cart-state" class="empty-state" style="padding: 24px 14px;">Ainda não há itens no carrinho.</div>
+                  </div>
+                </div>
+              </aside>
+            </div>
           </div>
-        </div>
+        </main>
 
-        <div id="quick-add-container" class="quick-add hidden">
-          <form id="quick-add-form" class="quick-form" method="post" action="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" novalidate>
+        <footer class="site-footer">
+          <div class="container footer-content">
+            <p>© 2026 NumEsquece Lista · Caderno de Compras Inteligente</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação de Finalização -->
+    <div id="finish-confirmation" class="confirmation-modal hidden" aria-modal="true" role="dialog">
+      <div class="confirmation-dialog">
+        <p>Deseja realmente finalizar a compra e retornar às suas listas?</p>
+        <div class="confirmation-actions">
+          <form method="post" action="{{ url_for('shopping.finalize_list', list_id=shopping_list.id) }}" id="finish-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="categoria" value="geral" />
-            <input type="hidden" name="preco_indefinido" value="false" />
-            <div class="field">
-              <label for="quick-name">Nome</label>
-              <input id="quick-name" name="nome" type="text" placeholder="Ex: Café" required />
-            </div>
-            <div class="field">
-              <label for="quick-quantidade">Quantidade</label>
-              <input id="quick-quantidade" name="quantidade" type="text" value="1" required />
-            </div>
-            <div class="field">
-              <label for="quick-preco">Preço</label>
-              <input id="quick-preco" name="preco" type="text" value="0,00" required />
-            </div>
-            <button type="submit" name="submit" value="Adicionar item" class="save-btn" style="height: 42px;">Salvar</button>
+            <button type="button" class="confirmation-btn confirmation-btn-no" id="finish-no-button">Não, continuar comprando</button>
+            <button type="submit" class="confirmation-btn confirmation-btn-yes" id="finish-yes-button">Sim, finalizar</button>
           </form>
         </div>
-
-        <div class="purchase-total-box">
-          <label for="purchase-total">Valor da compra</label>
-          <strong id="purchase-total">R$ 0,00</strong>
-        </div>
-
-        <div id="cart-items" class="cart-list" aria-live="polite"></div>
-        <div id="empty-cart-state" class="empty-state">Ainda não há itens no carrinho.</div>
       </div>
-
-      <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
-        <a href="{{ url_for('shopping.list_lists') }}" class="cart-btn" style="display: inline-block; text-decoration: none; text-align: center; padding: 10px 18px; background: #16a34a;">Finalizar</a>
-      </div>
-
-      <div class="unsaved-warning" id="unsaved-warning">Salve as alterações antes de continuar</div>
     </div>
 
     <script>
@@ -443,16 +687,16 @@
           <div class="item-row">
             <div class="item-name">${item.name}</div>
             <div class="item-meta">
-              <label style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Quantidade</label>
+              <label>Quantidade</label>
               <input type="text" name="quantidade" value="${item.quantity}" />
             </div>
             <div class="item-meta">
-              <label style="display:block; margin-bottom:6px; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:#64748b;">Preço</label>
+              <label>Preço</label>
               <input type="text" name="preco" value="${item.price}" />
             </div>
             <div class="item-actions">
-              <button type="submit" class="save-btn">Salvar</button>
-              <button type="button" class="cart-btn" data-item-id="${item.id}">Coloquei no carrinho</button>
+              <button type="submit" class="save-btn btn-primary" aria-label="Salvar item ${item.name}">Salvar</button>
+              <button type="button" class="cart-btn" data-item-id="${item.id}" aria-label="Colocar ${item.name} no carrinho">Coloquei no carrinho</button>
             </div>
           </div>
         `;
@@ -510,9 +754,9 @@
             <div class="cart-item-meta">
               <strong>${item.name}</strong>
               <span>Quantidade: ${item.quantity}</span>
-              <span>Valor: ${toCurrency(total)}</span>
+              <span>Subtotal: ${toCurrency(total)}</span>
             </div>
-            <button type="button" class="remove-cart-btn" data-item-id="${item.id}">Tirar do carrinho</button>
+            <button type="button" class="remove-cart-btn" data-item-id="${item.id}" aria-label="Tirar ${item.name} do carrinho">Tirar do carrinho</button>
           `;
 
           cartItem.querySelector('.remove-cart-btn').addEventListener('click', () => {
@@ -607,20 +851,87 @@
         }
       });
 
+      const finishButton = document.getElementById('finalize-button');
+      const finishConfirmation = document.getElementById('finish-confirmation');
+      const finishNoButton = document.getElementById('finish-no-button');
+      if (finishButton && finishConfirmation) {
+        finishButton.addEventListener('click', () => {
+          finishConfirmation.classList.remove('hidden');
+        });
+      }
+      if (finishNoButton && finishConfirmation) {
+        finishNoButton.addEventListener('click', () => {
+          finishConfirmation.classList.add('hidden');
+        });
+      }
+
       renderCart();
 
-      const sideMenuToggle = document.querySelector('.side-menu-toggle');
-      if (sideMenuToggle) {
-        sideMenuToggle.addEventListener('click', () => {
-          document.querySelector('.side-menu').style.width = document.querySelector('.side-menu').style.width === '62px' ? '220px' : '62px';
-          const nav = document.querySelector('.side-menu-nav');
-          if (nav) {
-            nav.style.display = nav.style.display === 'none' ? 'flex' : 'none';
+      // Controle unificado do menu lateral (Sidebar Off-Canvas e Desktop)
+      const body = document.body;
+      const sideToggleBtn = document.getElementById('side-menu-toggle');
+      const topbarToggleBtn = document.getElementById('topbar-menu-toggle');
+      const backdrop = document.getElementById('sidebar-backdrop');
+
+      const isMobile = () => window.innerWidth <= 900;
+
+      const openDrawer = () => {
+        body.classList.add('sidebar-open');
+        if (topbarToggleBtn) topbarToggleBtn.setAttribute('aria-expanded', 'true');
+        if (sideToggleBtn) sideToggleBtn.setAttribute('aria-expanded', 'true');
+      };
+
+      const closeDrawer = () => {
+        body.classList.remove('sidebar-open');
+        if (topbarToggleBtn) topbarToggleBtn.setAttribute('aria-expanded', 'false');
+        if (sideToggleBtn) sideToggleBtn.setAttribute('aria-expanded', 'false');
+      };
+
+      const toggleSidebar = () => {
+        if (isMobile()) {
+          if (body.classList.contains('sidebar-open')) {
+            closeDrawer();
+          } else {
+            openDrawer();
+          }
+        } else {
+          body.classList.toggle('sidebar-collapsed');
+          const isCollapsed = body.classList.contains('sidebar-collapsed');
+          if (sideToggleBtn) {
+            sideToggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+            sideToggleBtn.setAttribute('aria-label', isCollapsed ? 'Abrir menu lateral' : 'Fechar menu lateral');
+          }
+          if (topbarToggleBtn) {
+            topbarToggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+          }
+        }
+      };
+
+      if (topbarToggleBtn) {
+        topbarToggleBtn.addEventListener('click', toggleSidebar);
+      }
+      if (sideToggleBtn) {
+        sideToggleBtn.addEventListener('click', () => {
+          if (isMobile()) {
+            closeDrawer();
+          } else {
+            toggleSidebar();
           }
         });
       }
+      if (backdrop) {
+        backdrop.addEventListener('click', closeDrawer);
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+          closeDrawer();
+        }
+      });
+      window.addEventListener('resize', () => {
+        if (!isMobile() && body.classList.contains('sidebar-open')) {
+          closeDrawer();
+        }
+      });
     </script>
-      </div>
-    </div>
   </body>
 </html>

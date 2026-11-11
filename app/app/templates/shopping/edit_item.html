@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar item · NumEsquece{% endblock %}
+{% block title %}Editar item · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
   <div>
     <p class="eyebrow">Lista de compras</p>
     <h1>Editar item</h1>
-    <p>{{ shopping_list.titulo }}</p>
+    <p>Atualizando informações do produto na lista <strong>{{ shopping_list.titulo }}</strong></p>
   </div>
 </section>
 
-<section class="panel form-panel">
+<section class="panel form-panel" style="max-width: 800px; margin: 0 auto;">
   <form method="post" novalidate>
     {{ form.hidden_tag() }}
 
@@ -36,7 +36,7 @@
     <div class="form-grid">
       <div class="field-group">
         {{ form.nome.label }}
-        {{ form.nome(class_='input-field') }}
+        {{ form.nome(class_='input-field', placeholder='Nome do item') }}
         {% for error in form.nome.errors %}
           <span class="field-error">{{ error }}</span>
         {% endfor %}
@@ -44,20 +44,20 @@
 
       <div class="field-group">
         {{ form.quantidade.label }}
-        {{ form.quantidade(class_='input-field') }}
+        {{ form.quantidade(class_='input-field', placeholder='Ex: 2') }}
       </div>
 
       <div class="field-group">
         {{ form.categoria.label }}
-        {{ form.categoria(class_='input-field') }}
+        {{ form.categoria(class_='input-field', placeholder='Ex: Mercearia / Hortifruti') }}
       </div>
 
       <div class="field-group">
         {{ form.preco.label }}
-        {{ form.preco(class_='input-field') }}
+        {{ form.preco(class_='input-field', placeholder='0,00') }}
       </div>
 
-      <div class="field-group checkbox-wrapper" style="grid-column: 2; justify-self: start; margin-top: 10px; margin-left: 18px;">
+      <div class="field-group checkbox-wrapper full-width">
         <div class="checkbox-inline">
           {{ form.preco_indefinido() }}
           <label for="preco_indefinido">{{ form.preco_indefinido.label.text }}</label>

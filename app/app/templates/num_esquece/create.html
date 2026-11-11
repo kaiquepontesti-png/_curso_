@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Novo registro · NumEsquece{% endblock %}
+{% block title %}Novo registro · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
   <div>
-    <p class="eyebrow">Cadastro</p>
+    <p class="eyebrow">Biblioteca</p>
     <h1>Novo registro</h1>
+    <p>Cadastre um item ou anotação no sistema NumEsquece Lista.</p>
   </div>
 </section>
 
@@ -17,7 +18,7 @@
     <div class="form-grid">
       <div class="field-group">
         {{ form.titulo.label }}
-        {{ form.titulo(class_='input-field') }}
+        {{ form.titulo(class_='input-field', placeholder='Título do registro') }}
         {% for error in form.titulo.errors %}
           <span class="field-error">{{ error }}</span>
         {% endfor %}
@@ -25,7 +26,7 @@
 
       <div class="field-group">
         {{ form.categoria.label }}
-        {{ form.categoria(class_='input-field') }}
+        {{ form.categoria(class_='input-field', placeholder='Ex: Operacional / Compras') }}
         {% for error in form.categoria.errors %}
           <span class="field-error">{{ error }}</span>
         {% endfor %}
@@ -33,7 +34,7 @@
 
       <div class="field-group full-width">
         {{ form.descricao.label }}
-        {{ form.descricao(class_='input-field textarea-field') }}
+        {{ form.descricao(class_='input-field textarea-field', placeholder='Descreva detalhes ou observações...') }}
         {% for error in form.descricao.errors %}
           <span class="field-error">{{ error }}</span>
         {% endfor %}

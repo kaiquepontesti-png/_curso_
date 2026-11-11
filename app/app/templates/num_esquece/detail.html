@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Detalhes · NumEsquece{% endblock %}
+{% block title %}Detalhes · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header detail-header">
   <div>
-    <p class="eyebrow">Detalhes</p>
+    <p class="eyebrow">Visualização</p>
     <h1>{{ record.titulo }}</h1>
   </div>
-  <div class="action-group">
+  <div class="action-group" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
     <a href="{{ url_for('num_esquece.edit_record', record_id=record.id) }}" class="btn btn-secondary">Editar</a>
     <form action="{{ url_for('num_esquece.delete_record', record_id=record.id) }}" method="post" class="inline-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <button type="submit" class="btn btn-danger" data-confirm="Deseja realmente excluir este registro?">Excluir</button>
+      <button type="submit" class="btn btn-danger" data-confirm="Deseja realmente excluir este registro?" aria-label="Excluir {{ record.titulo }}">Excluir</button>
     </form>
+    <a href="{{ url_for('num_esquece.list_records') }}" class="btn btn-secondary">Voltar à lista</a>
   </div>
 </section>
 
@@ -21,7 +22,7 @@
   <div class="details-grid">
     <div>
       <label>Categoria</label>
-      <p>{{ record.categoria }}</p>
+      <p><span class="category-pill">{{ record.categoria }}</span></p>
     </div>
     <div>
       <label>Status</label>
@@ -44,8 +45,8 @@
 
   {% if record.shopping_list_id %}
     <div class="description-block">
-      <label>Lista vinculada</label>
-      <p><a href="{{ url_for('shopping.detail_list', list_id=record.shopping_list_id) }}" class="btn btn-secondary btn-small">Abrir lista de compras</a></p>
+      <label>Lista de compras vinculada</label>
+      <p><a href="{{ url_for('shopping.detail_list', list_id=record.shopping_list_id) }}" class="btn btn-primary btn-small">Abrir lista de compras</a></p>
     </div>
   {% endif %}
 </section>

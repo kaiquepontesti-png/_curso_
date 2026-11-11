@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ shopping_list.titulo }} · NumEsquece{% endblock %}
+{% block title %}{{ shopping_list.titulo }} · NumEsquece Lista{% endblock %}
 
 {% block content %}
 <section class="page-header">
@@ -11,23 +11,26 @@
       <p>{{ shopping_list.descricao }}</p>
     {% endif %}
   </div>
-  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-    <a href="{{ url_for('shopping.start_shopping') }}" class="btn btn-primary">Vamos começar as compras?</a>
-    <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary">Editar</a>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-hero-shop">
+      <span>🛒 Vamos começar as compras?</span>
+    </a>
+    <a href="{{ url_for('shopping.edit_list', list_id=shopping_list.id) }}" class="btn btn-secondary">✏️ Editar</a>
     <form action="{{ url_for('shopping.duplicate_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <button type="submit" class="btn btn-secondary">Duplicar</button>
+      <button type="submit" class="btn btn-secondary">📋 Duplicar</button>
     </form>
     <form action="{{ url_for('shopping.delete_list', list_id=shopping_list.id) }}" method="post" style="display: inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <button type="submit" class="btn btn-danger" onclick="return confirm('Remover esta lista?')">Excluir</button>
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Remover esta lista?')">🗑️ Excluir</button>
     </form>
   </div>
 </section>
 
-<section class="panel" style="margin-bottom: 24px;">
+<!-- Formulário para Adicionar Item -->
+<section class="panel" style="margin-bottom: 26px;">
   <div class="panel-header">
-    <h2>Adicionar item</h2>
+    <h2>Adicionar item à lista</h2>
   </div>
 
   <form method="post" novalidate>
@@ -51,10 +54,10 @@
       <option value="15" label="15"></option>
     </datalist>
 
-    <div class="form-grid">
+    <div class="add-item-form-grid">
       <div class="field-group">
         {{ form.nome.label }}
-        {{ form.nome(class_='input-field') }}
+        {{ form.nome(class_='input-field', placeholder='Ex: Arroz integral') }}
         {% for error in form.nome.errors %}
           <span class="field-error">{{ error }}</span>
         {% endfor %}
@@ -62,59 +65,81 @@
 
       <div class="field-group">
         {{ form.quantidade.label }}
-        {{ form.quantidade(class_='input-field') }}
+        {{ form.quantidade(class_='input-field', placeholder='Ex: 2') }}
       </div>
 
       <div class="field-group">
         {{ form.categoria.label }}
-        {{ form.categoria(class_='input-field') }}
+        {{ form.categoria(class_='input-field', placeholder='Ex: Mercearia') }}
       </div>
 
       <div class="field-group">
         {{ form.preco.label }}
-        {{ form.preco(class_='input-field') }}
+        {{ form.preco(class_='input-field', placeholder='0,00') }}
       </div>
 
-      <div class="field-group checkbox-wrapper" style="grid-column: 2; justify-self: start; margin-top: 12px; margin-left: 18px;">
+      <div class="field-group checkbox-wrapper">
         <div class="checkbox-inline">
           {{ form.preco_indefinido() }}
           <label for="preco_indefinido">{{ form.preco_indefinido.label.text }}</label>
         </div>
       </div>
-    </div>
 
-    <div class="form-actions">
-      {{ form.submit(class_='btn btn-primary') }}
+      <div class="add-item-submit">
+        {{ form.submit(class_='btn btn-primary', value='Adicionar Item') }}
+      </div>
     </div>
   </form>
 </section>
 
+<!-- Lista de Itens Cadastrados -->
 <section class="panel">
   <div class="panel-header">
     <h2>Itens da lista</h2>
   </div>
 
   {% if shopping_list.items %}
-    <div class="record-list compact-list">
+    <div class="record-list compact-list items-dual-grid">
       {% for item in shopping_list.items %}
-        <article class="record-item">
-          <div>
-            <p class="record-tag">{{ item.categoria }}</p>
-            <h3>{{ item.nome }}</h3>
-            <p>Quantidade: {{ item.quantidade }}</p>
-            <p>Preço: R$ {{ item.preco or '0,00' }}</p>
+        <article class="record-item shopping-item-card{% if item.comprado %} is-bought{% endif %}">
+          <div class="shopping-item-left">
+            <!-- Toggle Check Moderno para Item Pego na Prateleira -->
+            <form action="{{ url_for('shopping.toggle_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" class="item-toggle-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <button
+                type="submit"
+                class="item-check-toggle{% if item.comprado %} is-checked{% endif %}"
+                aria-label="{% if item.comprado %}Desmarcar item {{ item.nome }}{% else %}Marcar {{ item.nome }} como pego{% endif %}"
+                title="{% if item.comprado %}Desmarcar item {{ item.nome }}{% else %}Marcar {{ item.nome }} como pego{% endif %}"
+              >
+                {% if item.comprado %}✓{% else %}&nbsp;{% endif %}
+              </button>
+            </form>
+
+            <!-- Dados Centrais do Item (Nome, Qtd, Preço, Corredor) -->
+            <div class="shopping-item-copy">
+              {% if item.categoria %}
+                <span class="category-pill category-pill-blue">{{ item.categoria }}</span>
+              {% endif %}
+              <h3 class="item-title{% if item.comprado %} item-checked{% endif %}">{{ item.nome }}</h3>
+              <div class="item-details">
+                <span class="detail-badge detail-badge-qty">Qtd: <strong>{{ item.quantidade }}</strong></span>
+                <span class="detail-badge detail-badge-price">R$ <strong>{{ item.preco or '0,00' }}</strong></span>
+              </div>
+            </div>
           </div>
 
-          <div class="record-meta" style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+          <!-- Ações à Direita: Status, Editar, Excluir -->
+          <div class="record-meta">
             <span class="status-badge {% if item.comprado %}status-concluido{% else %}status-pendente{% endif %}">
-              {% if item.comprado %}Comprado{% else %}Pendente{% endif %}
+              {% if item.comprado %}● No carrinho{% else %}● Na prateleira{% endif %}
             </span>
 
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-              <a href="{{ url_for('shopping.edit_item', list_id=shopping_list.id, item_id=item.id) }}" class="btn btn-secondary btn-small">Editar</a>
+            <div class="item-actions-row">
+              <a href="{{ url_for('shopping.edit_item', list_id=shopping_list.id, item_id=item.id) }}" class="btn btn-secondary btn-small" aria-label="Editar item {{ item.nome }}">✏️ Editar</a>
               <form action="{{ url_for('shopping.delete_item', list_id=shopping_list.id, item_id=item.id) }}" method="post" style="display: inline;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remover este item?')">Excluir</button>
+                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Remover este item da lista?')" aria-label="Excluir {{ item.nome }}">🗑️ Excluir</button>
               </form>
             </div>
           </div>
@@ -122,12 +147,14 @@
       {% endfor %}
     </div>
 
-    <div style="display: flex; justify-content: center; margin-top: 24px;">
-      <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-primary">Vamos comprar?</a>
+    <div style="display: flex; justify-content: center; margin-top: 32px;">
+      <a href="{{ url_for('shopping.start_selected_list', list_id=shopping_list.id) }}" class="btn btn-hero-shop" style="min-width: 280px; font-size: 1.05rem; padding: 14px 28px;">
+        <span>🛒 Vamos começar as compras?</span>
+      </a>
     </div>
   {% else %}
     <div class="empty-state">
-      <p>Esta lista ainda não tem itens.</p>
+      <p>Esta lista ainda não possui itens cadastrados.</p>
     </div>
   {% endif %}
 </section>

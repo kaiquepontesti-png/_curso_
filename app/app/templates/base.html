@@ -3,65 +3,209 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}NumEsquece{% endblock %}</title>
+    <title>{% block title %}NumEsquece Lista · Caderno de Compras Inteligente{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/num_esquece.css') }}" />
   </head>
   <body class="{% if request.endpoint == 'num_esquece.index' %}home-page{% endif %}">
-    {% if request.endpoint != 'num_esquece.index' %}
-      <aside class="side-menu" id="side-menu" aria-label="Menu lateral">
-        <div class="side-menu-header">
-          <button type="button" class="side-menu-toggle" id="side-menu-toggle" aria-label="Abrir ou fechar menu">☰</button>
-        </div>
+    <div class="app-layout">
+      <!-- Backdrop translúcido para gaveta off-canvas em telas móveis -->
+      <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
 
-        <nav class="side-menu-nav">
-          <a href="{{ url_for('num_esquece.index') }}">Início</a>
-          {% if current_user.is_authenticated %}
-            <a href="{{ url_for('shopping.list_lists') }}">Minhas listas</a>
-            <a href="{{ url_for('shopping.create_list') }}">Nova lista</a>
-            <a href="{{ url_for('auth.logout') }}">Sair</a>
-          {% else %}
-            <a href="{{ url_for('auth.login') }}">Entrar</a>
-            <a href="{{ url_for('auth.register') }}">Cadastrar</a>
-          {% endif %}
-          <button type="button" class="side-menu-back" onclick="history.back()">Voltar</button>
-        </nav>
-      </aside>
-    {% endif %}
-
-    <main class="container page-content">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-container">
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
+      <!-- Menu lateral (Sidebar estilo Gemini / ChatGPT) -->
+      {% if request.endpoint != 'num_esquece.index' %}
+        <aside class="side-menu" id="side-menu" aria-label="Menu lateral">
+          <div class="side-menu-header">
+            <a href="{{ url_for('num_esquece.index') }}" class="sidebar-brand">
+              <span class="sidebar-brand-icon" aria-hidden="true">📝</span>
+              <span class="sidebar-brand-text">NumEsquece Lista</span>
+            </a>
+            <button
+              type="button"
+              class="side-menu-toggle"
+              id="side-menu-toggle"
+              aria-label="Fechar menu"
+              aria-controls="side-menu-nav"
+              aria-expanded="true"
+            >
+              ✕
+            </button>
           </div>
+
+          <nav class="side-menu-nav" id="side-menu-nav" aria-label="Navegação principal">
+            <a href="{{ url_for('num_esquece.index') }}" class="nav-link {% if request.endpoint == 'num_esquece.index' %}active{% endif %}">
+              <span class="nav-icon" aria-hidden="true">🏠</span>
+              <span>Início</span>
+            </a>
+            {% if current_user.is_authenticated %}
+              <a href="{{ url_for('shopping.list_lists') }}" class="nav-link {% if request.endpoint in ['shopping.list_lists', 'shopping.detail_list', 'shopping.edit_list'] %}active{% endif %}">
+                <span class="nav-icon" aria-hidden="true">📋</span>
+                <span>Minhas listas</span>
+              </a>
+              <a href="{{ url_for('shopping.create_list') }}" class="nav-link {% if request.endpoint == 'shopping.create_list' %}active{% endif %}">
+                <span class="nav-icon" aria-hidden="true">➕</span>
+                <span>Nova lista</span>
+              </a>
+              <a href="{{ url_for('shopping.completed_purchases') }}" class="nav-link {% if request.endpoint == 'shopping.completed_purchases' %}active{% endif %}">
+                <span class="nav-icon" aria-hidden="true">📜</span>
+                <span>Histórico</span>
+              </a>
+              <div class="nav-divider"></div>
+              <a href="{{ url_for('auth.logout') }}" class="nav-link nav-link-logout">
+                <span class="nav-icon" aria-hidden="true">🚪</span>
+                <span>Sair</span>
+              </a>
+            {% else %}
+              <a href="{{ url_for('auth.login') }}" class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}">
+                <span class="nav-icon" aria-hidden="true">🔑</span>
+                <span>Entrar</span>
+              </a>
+              <a href="{{ url_for('auth.register') }}" class="nav-link {% if request.endpoint == 'auth.register' %}active{% endif %}">
+                <span class="nav-icon" aria-hidden="true">✍️</span>
+                <span>Cadastrar</span>
+              </a>
+            {% endif %}
+
+            <div class="nav-footer-spacer"></div>
+            <button type="button" class="side-menu-back" onclick="history.back()" aria-label="Voltar para a página anterior">
+              <span aria-hidden="true">←</span>
+              <span>Voltar</span>
+            </button>
+          </nav>
+        </aside>
+      {% endif %}
+
+      <!-- Conteúdo Principal -->
+      <div class="app-main-wrapper">
+        <!-- Barra superior (Topbar fixa com menu hambúrguer) -->
+        {% if request.endpoint != 'num_esquece.index' %}
+          <header class="app-topbar" id="app-topbar">
+            <div class="topbar-left">
+              <button
+                type="button"
+                class="topbar-toggle-btn"
+                id="topbar-menu-toggle"
+                aria-label="Abrir menu lateral"
+                aria-controls="side-menu"
+                aria-expanded="false"
+              >
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+                <span class="hamburger-bar"></span>
+              </button>
+              <a href="{{ url_for('num_esquece.index') }}" class="topbar-brand">
+                <span class="brand-icon" aria-hidden="true">📝</span>
+                <span class="brand-name">NumEsquece Lista</span>
+              </a>
+            </div>
+            <div class="topbar-right">
+              {% if current_user.is_authenticated %}
+                <a href="{{ url_for('shopping.create_list') }}" class="btn btn-primary btn-small">
+                  <span>+ Nova lista</span>
+                </a>
+              {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-small">Entrar</a>
+              {% endif %}
+            </div>
+          </header>
         {% endif %}
-      {% endwith %}
 
-      {% block content %}{% endblock %}
-    </main>
+        <main class="container page-content" id="main-content">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-container">
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
 
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© 2026 NumEsquece</p>
+          {% block content %}{% endblock %}
+        </main>
+
+        <footer class="site-footer">
+          <div class="container footer-content">
+            <p>© 2026 NumEsquece Lista · Caderno de Compras Inteligente</p>
+          </div>
+        </footer>
       </div>
-    </footer>
+    </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/num_esquece.js') }}"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const toggleButton = document.getElementById('side-menu-toggle');
         const body = document.body;
+        const sideToggleBtn = document.getElementById('side-menu-toggle');
+        const topbarToggleBtn = document.getElementById('topbar-menu-toggle');
+        const backdrop = document.getElementById('sidebar-backdrop');
 
-        if (!toggleButton) {
-          return;
+        const isMobile = () => window.innerWidth <= 900;
+
+        const openDrawer = () => {
+          body.classList.add('sidebar-open');
+          if (topbarToggleBtn) topbarToggleBtn.setAttribute('aria-expanded', 'true');
+          if (sideToggleBtn) sideToggleBtn.setAttribute('aria-expanded', 'true');
+        };
+
+        const closeDrawer = () => {
+          body.classList.remove('sidebar-open');
+          if (topbarToggleBtn) topbarToggleBtn.setAttribute('aria-expanded', 'false');
+          if (sideToggleBtn) sideToggleBtn.setAttribute('aria-expanded', 'false');
+        };
+
+        const toggleSidebar = () => {
+          if (isMobile()) {
+            if (body.classList.contains('sidebar-open')) {
+              closeDrawer();
+            } else {
+              openDrawer();
+            }
+          } else {
+            body.classList.toggle('sidebar-collapsed');
+            const isCollapsed = body.classList.contains('sidebar-collapsed');
+            if (sideToggleBtn) {
+              sideToggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+              sideToggleBtn.setAttribute('aria-label', isCollapsed ? 'Abrir menu lateral' : 'Fechar menu lateral');
+            }
+            if (topbarToggleBtn) {
+              topbarToggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+            }
+          }
+        };
+
+        if (topbarToggleBtn) {
+          topbarToggleBtn.addEventListener('click', toggleSidebar);
         }
 
-        toggleButton.addEventListener('click', () => {
-          body.classList.toggle('sidebar-collapsed');
+        if (sideToggleBtn) {
+          sideToggleBtn.addEventListener('click', () => {
+            if (isMobile()) {
+              closeDrawer();
+            } else {
+              toggleSidebar();
+            }
+          });
+        }
+
+        if (backdrop) {
+          backdrop.addEventListener('click', closeDrawer);
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+            closeDrawer();
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          if (!isMobile() && body.classList.contains('sidebar-open')) {
+            closeDrawer();
+          }
         });
       });
     </script>

@@ -1,12 +1,26 @@
+import json
+from decimal import Decimal, InvalidOperation
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.extensions import db
 from app.forms.shopping_forms import ShoppingItemForm, ShoppingListForm
 from app.models.num_esquece import NumEsquece
-from app.models.shopping import ShoppingItem, ShoppingList
+from app.models.shopping import CompletedPurchase, ShoppingItem, ShoppingList
 
 shopping_bp = Blueprint("shopping", __name__, template_folder="../templates")
+
+
+def parse_price(value):
+    try:
+        return Decimal(str(value or "0").strip().replace(".", "").replace(",", "."))
+    except (InvalidOperation, TypeError, ValueError):
+        return Decimal("0")
+
+
+def format_currency(value):
+    return f"R$ {Decimal(str(value or '0')):,.2f}".replace(".", "X").replace(",", ".").replace("X", ",")
 
 
 def sync_shopping_list_to_library(shopping_list: ShoppingList):
@@ -16,7 +30,7 @@ def sync_shopping_list_to_library(shopping_list: ShoppingList):
             titulo=shopping_list.titulo,
             descricao=shopping_list.descricao or "Lista de compras salva na biblioteca.",
             categoria="compras",
-            status="pendente",
+            status="concluido" if shopping_list.finalizado else "pendente",
             shopping_list_id=shopping_list.id,
         )
         db.session.add(library_record)
@@ -25,7 +39,10 @@ def sync_shopping_list_to_library(shopping_list: ShoppingList):
     library_record.titulo = shopping_list.titulo
     library_record.descricao = shopping_list.descricao or "Lista de compras salva na biblioteca."
     library_record.categoria = "compras"
-    library_record.status = "pendente" if not shopping_list.items else "em_andamento" if any(item.comprado for item in shopping_list.items) else "pendente"
+    if shopping_list.finalizado:
+        library_record.status = "concluido"
+    else:
+        library_record.status = "pendente" if not shopping_list.items else "em_andamento" if any(item.comprado for item in shopping_list.items) else "pendente"
     return library_record
 
 
@@ -33,18 +50,44 @@ def sync_shopping_list_to_library(shopping_list: ShoppingList):
 @login_required
 def list_lists():
     lists = (
-        ShoppingList.query.filter_by(user_id=current_user.id)
+        ShoppingList.query.filter_by(user_id=current_user.id, finalizado=False)
         .order_by(ShoppingList.updated_at.desc())
         .all()
     )
     return render_template("shopping/list_lists.html", lists=lists)
 
 
+@shopping_bp.route("/listas/compras-finalizadas")
+@login_required
+def completed_purchases():
+    purchases = (
+        CompletedPurchase.query.filter_by(user_id=current_user.id)
+        .order_by(CompletedPurchase.data_compra.desc())
+        .all()
+    )
+    purchases_with_items = []
+    for purchase in purchases:
+        purchases_with_items.append(
+            {
+                "purchase": purchase,
+                "items": json.loads(purchase.itens) if purchase.itens else [],
+            }
+        )
+    latest_purchase = purchases_with_items[0] if purchases_with_items else None
+    latest_items = latest_purchase["items"] if latest_purchase else []
+    return render_template(
+        "shopping/completed_purchases.html",
+        purchases=purchases_with_items,
+        latest_purchase=latest_purchase,
+        latest_items=latest_items,
+    )
+
+
 @shopping_bp.route("/listas/iniciar")
 @login_required
 def start_shopping():
     lists = (
-        ShoppingList.query.filter_by(user_id=current_user.id)
+        ShoppingList.query.filter_by(user_id=current_user.id, finalizado=False)
         .order_by(ShoppingList.updated_at.desc())
         .all()
     )
@@ -78,6 +121,10 @@ def create_list():
 @login_required
 def start_selected_list(list_id: int):
     shopping_list = ShoppingList.query.filter_by(id=list_id, user_id=current_user.id).first_or_404()
+    if shopping_list.finalizado:
+        flash("Esta lista já foi finalizada e está salva no histórico.", "info")
+        return redirect(url_for("shopping.completed_purchases"))
+
     if request.method == "POST":
         item_id = request.form.get("item_id", type=int)
         nome = (request.form.get("nome") or "").strip()
@@ -128,6 +175,50 @@ def start_selected_list(list_id: int):
             return render_template("shopping/selected_blank.html", shopping_list=shopping_list)
 
     return render_template("shopping/selected_blank.html", shopping_list=shopping_list)
+
+
+@shopping_bp.route("/listas/<int:list_id>/finalizar", methods=["POST"])
+@login_required
+def finalize_list(list_id: int):
+    shopping_list = ShoppingList.query.filter_by(id=list_id, user_id=current_user.id).first_or_404()
+    if shopping_list.finalizado:
+        flash("Esta lista já foi finalizada.", "info")
+        return redirect(url_for("shopping.completed_purchases"))
+
+    if not shopping_list.items:
+        flash("Adicione pelo menos um item antes de finalizar a compra.", "warning")
+        return redirect(url_for("shopping.start_selected_list", list_id=shopping_list.id))
+
+    total_compra = Decimal("0")
+    itens = []
+    for item in shopping_list.items:
+        quantidade = int(str(item.quantidade or "1").strip() or "1") if str(item.quantidade or "1").strip().isdigit() else 1
+        preco = parse_price(item.preco)
+        total_compra += preco * Decimal(quantidade)
+        itens.append(
+            {
+                "nome": item.nome,
+                "quantidade": quantidade,
+                "preco": item.preco or "0,00",
+                "categoria": item.categoria,
+            }
+        )
+
+    purchase = CompletedPurchase(
+        user_id=current_user.id,
+        shopping_list_id=shopping_list.id,
+        titulo=shopping_list.titulo,
+        descricao=shopping_list.descricao,
+        data_compra=shopping_list.updated_at,
+        total_compra=format_currency(total_compra),
+        itens=json.dumps(itens, ensure_ascii=False),
+    )
+    db.session.add(purchase)
+    shopping_list.finalizado = True
+    sync_shopping_list_to_library(shopping_list)
+    db.session.commit()
+    flash("Compra finalizada com sucesso!", "success")
+    return redirect(url_for("shopping.completed_purchases"))
 
 
 @shopping_bp.route("/listas/<int:list_id>", methods=["GET", "POST"])
@@ -211,12 +302,27 @@ def duplicate_list(list_id: int):
 @login_required
 def delete_list(list_id: int):
     shopping_list = ShoppingList.query.filter_by(id=list_id, user_id=current_user.id).first_or_404()
-    library_record = NumEsquece.query.filter_by(shopping_list_id=shopping_list.id).first()
-    if library_record is not None:
-        db.session.delete(library_record)
-    db.session.delete(shopping_list)
-    db.session.commit()
-    flash("Lista removida com sucesso!", "success")
+    try:
+        with db.session.no_autoflush:
+            # Preserva compras finalizadas desassociando a lista sem perder histórico
+            CompletedPurchase.query.filter_by(shopping_list_id=shopping_list.id).update(
+                {"shopping_list_id": None}, synchronize_session=False
+            )
+            # Remove o espelho correspondente na biblioteca NumEsquece
+            library_records = NumEsquece.query.filter_by(shopping_list_id=shopping_list.id).all()
+            for rec in library_records:
+                db.session.delete(rec)
+
+            # Remove os itens da lista
+            for item in list(shopping_list.items):
+                db.session.delete(item)
+
+            db.session.delete(shopping_list)
+        db.session.commit()
+        flash("Lista removida com sucesso!", "success")
+    except Exception:
+        db.session.rollback()
+        flash("Ocorreu um erro ao excluir a lista. Tente novamente.", "danger")
     return redirect(url_for("shopping.list_lists"))
 
 
